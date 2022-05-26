@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "start": "sucrase-node src/main/server.ts",
+    "lint": "eslint 'src/**'",
+    "lint:fix": "eslint 'src/**' --fix",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.js",
