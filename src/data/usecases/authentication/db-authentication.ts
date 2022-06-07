@@ -11,8 +11,8 @@ export class DbAuthentication implements Authentication {
     const account = await this.findAccountByEmailRepository.find(authenticationParams.email)
     if (account) {
       const isValid = await this.hashComparer.compare(authenticationParams.password, account.password)
-      const accessToken = await this.encrypter.encrypt({ id: account.id, email: account.email })
       if (isValid) {
+        const accessToken = await this.encrypter.encrypt({ id: account.id, email: account.email })
         return {
           accessToken,
           name: account.name
