@@ -1,4 +1,4 @@
-import { HttpResponse, HttpRequest, Controller, EmailValidator, AddAccount, CheckEmailAccount } from './signup-protocols'
+import { HttpResponse, HttpRequest, Controller, EmailValidator, AddAccount, CheckEmailAccount, Authentication } from './signup-protocols'
 import { MissingParamError, InvalidParamError, EmailAlreadyRegisteredError } from '../../erros'
 import { badRequest, serverError, ok, forbidden } from '../../helpers/http-helper'
 
@@ -6,7 +6,8 @@ export class SignUpController implements Controller {
   constructor (
     private readonly emailValidator: EmailValidator,
     private readonly addAccount: AddAccount,
-    private readonly checkEmailAccount: CheckEmailAccount
+    private readonly checkEmailAccount: CheckEmailAccount,
+    private readonly authentication: Authentication
   ) { }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -33,12 +34,17 @@ export class SignUpController implements Controller {
         return forbidden(new EmailAlreadyRegisteredError())
       }
 
-      const account = await this.addAccount.add({
+      await this.addAccount.add({
         name,
         email,
         password
       })
-      return ok(account)
+
+      const authenticationModel = await this.authentication.auth({
+        email,
+        password
+      })
+      return ok(authenticationModel)
     } catch (error) {
       return serverError(error)
     }

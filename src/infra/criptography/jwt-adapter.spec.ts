@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import jwt from 'jsonwebtoken'
 import { JwtAdapter } from './jwt-adapter'
 
@@ -17,7 +18,7 @@ describe('Jwt Adapter', () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
     await sut.encrypt('any_value')
-    expect(signSpy).toHaveBeenCalledWith('any_value', secret)
+    expect(signSpy).toHaveBeenCalledWith('any_value', secret, { expiresIn: '1h' })
   })
 
   test('Should return a token on success', async () => {
