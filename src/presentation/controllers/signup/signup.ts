@@ -3,15 +3,11 @@ import { MissingParamError, InvalidParamError, EmailAlreadyRegisteredError } fro
 import { badRequest, serverError, ok, forbidden } from '../../helpers/http-helper'
 
 export class SignUpController implements Controller {
-  private readonly emailValidator: EmailValidator
-  private readonly addAccount: AddAccount
-  private readonly checkEmailAccount: CheckEmailAccount
-
-  constructor (emailValidator: EmailValidator, addAccount: AddAccount, checkEmailAccount: CheckEmailAccount) {
-    this.emailValidator = emailValidator
-    this.addAccount = addAccount
-    this.checkEmailAccount = checkEmailAccount
-  }
+  constructor (
+    private readonly emailValidator: EmailValidator,
+    private readonly addAccount: AddAccount,
+    private readonly checkEmailAccount: CheckEmailAccount
+  ) { }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
