@@ -37,6 +37,13 @@ const makeFakeRequest = (): HttpRequest => ({
 })
 
 describe('Load Categories Controller', () => {
+  test('Should call LoadCategories', async () => {
+    const { sut, loadCategoriesStub } = makeSut()
+    const loadSpy = jest.spyOn(loadCategoriesStub, 'load')
+    await sut.handle(makeFakeRequest())
+    expect(loadSpy).toHaveBeenCalledWith()
+  })
+
   test('Should return 500 if LoadCategories throws', async () => {
     const { sut, loadCategoriesStub } = makeSut()
     jest.spyOn(loadCategoriesStub, 'load').mockImplementationOnce(() => {
