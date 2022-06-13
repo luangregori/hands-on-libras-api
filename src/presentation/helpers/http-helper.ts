@@ -28,5 +28,5 @@ export const ok = (data: any): HttpResponse => ({
 
 export const noContent = (): HttpResponse => ({
   statusCode: 204,
-  body: null
+  body: {}
 })

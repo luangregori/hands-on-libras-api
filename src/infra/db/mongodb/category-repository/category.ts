@@ -5,7 +5,7 @@ import { MongoHelper } from '../helpers/mongo-helper'
 export class CategoryMongoRepository implements FindAllCategoriesRepository {
   async findAll (): Promise<CategoryModel[]> {
     const categoryCollection = await MongoHelper.getCollection('categories')
-    const result = await categoryCollection.find().toArray()
-    return result.map(category => MongoHelper.map(category))
+    const result = await categoryCollection.find({}).toArray()
+    return result.length ? result.map(category => MongoHelper.map(category)) : result
   }
 }
