@@ -2,8 +2,15 @@ import request from 'supertest'
 import app from '../config/app'
 import { MongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
 import { Collection } from 'mongodb'
+import { sign } from 'jsonwebtoken'
+import env from '../config/env'
 
 let categoryCollection: Collection
+
+const mockAccessToken = async (): Promise<string> => {
+  const accessToken = sign({ id: 'any_id' }, env.jwtSecret)
+  return accessToken
+}
 
 describe('Category Routes', () => {
   beforeAll(async () => {
@@ -20,12 +27,14 @@ describe('Category Routes', () => {
   })
 
   test('Should return 200 on search all categories', async () => {
+    const accessToken = await mockAccessToken()
     await categoryCollection.insertOne({
       id: 'any_id',
       name: 'any_name'
     })
     await request(app)
       .get('/api/categories')
+      .set('x-access-token', accessToken)
       .send({
         id: 'any_id',
         name: 'any_name'
