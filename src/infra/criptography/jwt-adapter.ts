@@ -7,4 +7,8 @@ export class JwtAdapter implements Encrypter {
   async encrypt (payload: any): Promise<string> {
     return jwt.sign(payload, this.secret, { expiresIn: '1h' })
   }
+
+  async verify (token: string): Promise<any> {
+    return jwt.verify(token, this.secret)
+  }
 }
