@@ -34,4 +34,10 @@ describe('Category Mongo Repository', () => {
     expect(categories[0].id).toBeDefined()
     expect(categories[0].name).toBe('valid_name')
   })
+
+  test('Should return null array', async () => {
+    const sut = makeSut()
+    const categories = await sut.findAll()
+    expect(categories.length).toBe(0)
+  })
 })
