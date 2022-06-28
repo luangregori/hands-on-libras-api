@@ -1,6 +1,6 @@
 import { CategoryModel } from '../../../domain/models/category'
 import { LoadCategoriesController } from './load-categories'
-import { LoadCategories, HttpRequest } from './load-categories-protocols'
+import { LoadCategories } from './load-categories-protocols'
 import { ok, serverError, noContent } from '../../helpers/http-helper'
 import { ServerError } from '../../errors'
 
@@ -32,9 +32,7 @@ const makeFakeCategory = (): CategoryModel => ({
   name: 'valid_name'
 })
 
-const makeFakeRequest = (): HttpRequest => ({
-  body: {}
-})
+const makeFakeRequest = (): any => ({})
 
 describe('Load Categories Controller', () => {
   test('Should call LoadCategories', async () => {

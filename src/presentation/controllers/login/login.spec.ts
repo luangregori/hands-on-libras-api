@@ -1,6 +1,6 @@
 import { LoginController } from './login'
 import { MissingParamError, ServerError } from '../../errors'
-import { HttpRequest, Authentication } from './login-protocols'
+import { Authentication } from './login-protocols'
 import { ok, serverError, badRequest, unauthorized } from '../../helpers/http-helper'
 
 const makeAuthentication = (): Authentication => {
@@ -17,11 +17,9 @@ const makeFakeAuthenticationResult = (): Authentication.Result => ({
   name: 'any_name'
 })
 
-const makeFakeRequest = (): HttpRequest => ({
-  body: {
-    email: 'any_email@mail.com',
-    password: 'any_password'
-  }
+const makeFakeRequest = (): LoginController.Request => ({
+  email: 'any_email@mail.com',
+  password: 'any_password'
 })
 
 interface SutTypes {
@@ -41,23 +39,21 @@ const makeSut = (): SutTypes => {
 describe('Login Controller', () => {
   test('Should return 400 if no email is provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        password: 'any_password'
-      }
+    const request = {
+      email: null,
+      password: 'any_password'
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
   })
 
   test('Should return 400 if no password is provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        email: 'any_email@mail.com'
-      }
+    const request = {
+      email: 'any_email@mail.com',
+      password: null
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
   })
 

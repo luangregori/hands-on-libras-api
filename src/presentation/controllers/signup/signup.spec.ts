@@ -1,6 +1,6 @@
 import { SignUpController } from './signup'
 import { MissingParamError, InvalidParamError, ServerError, EmailAlreadyRegisteredError } from '../../errors'
-import { EmailValidator, AccountModel, AddAccount, AddAccountModel, HttpRequest, CheckEmailAccount, Authentication } from './signup-protocols'
+import { EmailValidator, AccountModel, AddAccount, AddAccountModel, CheckEmailAccount, Authentication } from './signup-protocols'
 import { ok, serverError, badRequest, forbidden } from '../../helpers/http-helper'
 
 const makeEmailValidator = (): EmailValidator => {
@@ -51,13 +51,11 @@ const makeFakeAccount = (): AccountModel => ({
   password: 'valid_password'
 })
 
-const makeFakeRequest = (): HttpRequest => ({
-  body: {
-    name: 'any_name',
-    email: 'any_email@mail.com',
-    password: 'any_password',
-    passwordConfirmation: 'any_password'
-  }
+const makeFakeRequest = (): SignUpController.Request => ({
+  name: 'any_name',
+  email: 'any_email@mail.com',
+  password: 'any_password',
+  passwordConfirmation: 'any_password'
 })
 
 interface SutTypes {
@@ -86,67 +84,61 @@ const makeSut = (): SutTypes => {
 describe('SignUp Controller', () => {
   test('Should return 400 if no name is provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        email: 'any_email@mail.com',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
-      }
+    const request = {
+      name: null,
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('name')))
   })
 
   test('Should return 400 if no email is provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'any_name',
-        password: 'any_password',
-        passwordConfirmation: 'any_password'
-      }
+    const request = {
+      name: 'any_name',
+      email: null,
+      password: 'any_password',
+      passwordConfirmation: 'any_password'
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
   })
 
   test('Should return 400 if no password is provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        passwordConfirmation: 'any_password'
-      }
+    const request = {
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: null,
+      passwordConfirmation: 'any_password'
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('password')))
   })
 
   test('Should return 400 if no passwordConfirmation is provided', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        password: 'any_password'
-      }
+    const request = {
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      passwordConfirmation: null
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('passwordConfirmation')))
   })
 
   test('Should return 400 if password confirmation fails', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        password: 'any_password',
-        passwordConfirmation: 'invalid_password'
-      }
+    const request = {
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password',
+      passwordConfirmation: 'invalid_password'
     }
-    const httpResponse = await sut.handle(httpRequest)
+    const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('passwordConfirmation')))
   })
 

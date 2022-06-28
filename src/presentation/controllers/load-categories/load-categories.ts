@@ -1,4 +1,4 @@
-import { Controller, HttpRequest, HttpResponse, LoadCategories } from './load-categories-protocols'
+import { Controller, HttpResponse, LoadCategories } from './load-categories-protocols'
 import { ok, serverError, noContent } from '../../helpers/http-helper'
 
 export class LoadCategoriesController implements Controller {
@@ -6,7 +6,7 @@ export class LoadCategoriesController implements Controller {
     private readonly loadCategories: LoadCategories
   ) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (request: LoadCategoriesController.Request): Promise<HttpResponse> {
     try {
       const categories = await this.loadCategories.load()
       return categories.length ? ok(categories) : noContent()
@@ -14,4 +14,8 @@ export class LoadCategoriesController implements Controller {
       return serverError(error)
     }
   }
+}
+
+export namespace LoadCategoriesController {
+  export interface Request extends Controller.Request {}
 }

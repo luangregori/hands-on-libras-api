@@ -1,4 +1,4 @@
-import { HttpResponse, HttpRequest, Controller, EmailValidator, AddAccount, CheckEmailAccount, Authentication } from './signup-protocols'
+import { HttpResponse, Controller, EmailValidator, AddAccount, CheckEmailAccount, Authentication } from './signup-protocols'
 import { MissingParamError, InvalidParamError, EmailAlreadyRegisteredError } from '../../errors'
 import { badRequest, serverError, ok, forbidden } from '../../helpers/http-helper'
 
@@ -10,15 +10,15 @@ export class SignUpController implements Controller {
     private readonly authentication: Authentication
   ) { }
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (request: SignUpController.Request): Promise<HttpResponse> {
     try {
       const requiredFields = ['name', 'email', 'password', 'passwordConfirmation']
       for (const field of requiredFields) {
-        if (!httpRequest.body[field]) {
+        if (!request[field]) {
           return badRequest(new MissingParamError(field))
         }
       }
-      const { name, email, password, passwordConfirmation } = httpRequest.body
+      const { name, email, password, passwordConfirmation } = request
 
       if (password !== passwordConfirmation) {
         return badRequest(new InvalidParamError('passwordConfirmation'))
@@ -48,5 +48,14 @@ export class SignUpController implements Controller {
     } catch (error) {
       return serverError(error)
     }
+  }
+}
+
+export namespace SignUpController {
+  export interface Request {
+    name: string
+    email: string
+    password: string
+    passwordConfirmation: string
   }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import bcrypt from 'bcrypt'
 import { BcryptAdapter } from './bcrypt-adapter'
 

@@ -1,4 +1,4 @@
-import { HttpResponse, HttpRequest, Controller, Authentication } from './login-protocols'
+import { HttpResponse, Controller, Authentication } from './login-protocols'
 import { MissingParamError } from '../../errors'
 import { badRequest, serverError, ok, unauthorized } from '../../helpers/http-helper'
 
@@ -7,16 +7,16 @@ export class LoginController implements Controller {
     private readonly authentication: Authentication
   ) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (request: LoginController.Request): Promise<HttpResponse> {
     try {
       const requiredFields = ['email', 'password']
       for (const field of requiredFields) {
-        if (!httpRequest.body[field]) {
+        if (!request[field]) {
           return badRequest(new MissingParamError(field))
         }
       }
 
-      const authenticationParams: Authentication.Params = httpRequest.body
+      const authenticationParams: Authentication.Params = request
 
       const authenticationModel = await this.authentication.auth(authenticationParams)
       if (!authenticationModel) {
@@ -27,5 +27,12 @@ export class LoginController implements Controller {
     } catch (error) {
       return serverError(error)
     }
+  }
+}
+
+export namespace LoginController {
+  export interface Request {
+    email: string
+    password: string
   }
 }
