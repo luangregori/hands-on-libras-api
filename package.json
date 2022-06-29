@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "dev:debug": "nodemon --inspect",
-    "start": "sucrase-node src/main/server.ts",
+    "start": "node dist/main/server.js",
+    "build": "rimraf dist && tsc -p tsconfig-build.json",
     "lint": "eslint 'src/**'",
     "lint:fix": "eslint 'src/**' --fix",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
@@ -50,7 +51,11 @@
     "express": "^4.17.2",
     "fast-glob": "^3.2.11",
     "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongodb": "3.5.1",
     "validator": "^13.7.0"
+  },
+  "_moduleAliases": {
+    "@": "dist"
   }
 }
