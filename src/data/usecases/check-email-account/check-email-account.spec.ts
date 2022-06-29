@@ -1,4 +1,4 @@
-import { AccountModel } from '../add-account/db-add-account-protocols'
+import { AccountModel } from '@/data/usecases/add-account/db-add-account-protocols'
 import { DbCheckEmailAccount } from './check-email-account'
 import { CheckEmailAccount, FindAccountByEmailRepository } from './check-email-account-protocols'
 

@@ -1,5 +1,5 @@
 import { Controller, HttpResponse, LoadCategories } from './load-categories-protocols'
-import { ok, serverError, noContent } from '../../helpers/http-helper'
+import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
 
 export class LoadCategoriesController implements Controller {
   constructor (
