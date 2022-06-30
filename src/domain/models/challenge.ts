@@ -3,4 +3,5 @@ export interface ChallengeModel {
   name: string
   image_url: string
   description: string
+  categoryId: string
 }
