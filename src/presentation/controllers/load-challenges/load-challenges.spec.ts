@@ -31,7 +31,8 @@ const makeFakeChallenge = (): ChallengeModel => ({
   id: 'valid_id',
   name: 'valid_name',
   description: 'valid_description',
-  image_url: 'valid_image_url'
+  image_url: 'valid_image_url',
+  categoryId: 'valid_category_id'
 })
 
 const makeFakeRequest = (): any => ({
