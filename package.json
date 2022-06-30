@@ -1,6 +1,6 @@
 {
   "name": "hands-on-libras-api",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
   "scripts": {
     "start": "node dist/main/server.js",
