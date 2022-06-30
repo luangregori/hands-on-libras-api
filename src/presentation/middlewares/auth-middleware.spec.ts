@@ -1,7 +1,7 @@
-import { AuthUserByToken } from '../../domain/usecases/auth-user-by-token'
-import { AccessDeniedError } from '../errors'
-import { forbidden, ok, serverError } from '../helpers/http-helper'
 import { AuthMiddleware } from './auth-middleware'
+import { AccessDeniedError } from '@/presentation/errors'
+import { forbidden, ok, serverError } from '@/presentation/helpers/http-helper'
+import { AuthUserByToken } from '@/domain/usecases/auth-user-by-token'
 
 interface SutTypes{
   sut: AuthMiddleware

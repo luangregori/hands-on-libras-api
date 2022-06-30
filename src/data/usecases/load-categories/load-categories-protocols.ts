@@ -1,3 +1,3 @@
-export * from '../../../domain/usecases/load-categories'
-export * from '../../protocols/find-all-categories-repository'
-export * from '../../../domain/models/category'
+export * from '@/domain/usecases/load-categories'
+export * from '@/data/protocols/find-all-categories-repository'
+export * from '@/domain/models/category'

@@ -1,4 +1,4 @@
-import { AccountModel } from '../add-account/db-add-account-protocols'
+import { AccountModel } from '@/data/usecases/add-account/db-add-account-protocols'
 import { DbAuthentication } from './db-authentication'
 import { FindAccountByEmailRepository, HashComparer, Encrypter } from './db-authentication-protocols'
 

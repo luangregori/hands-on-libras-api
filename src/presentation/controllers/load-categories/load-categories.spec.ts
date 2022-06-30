@@ -1,8 +1,8 @@
-import { CategoryModel } from '../../../domain/models/category'
 import { LoadCategoriesController } from './load-categories'
 import { LoadCategories } from './load-categories-protocols'
-import { ok, serverError, noContent } from '../../helpers/http-helper'
-import { ServerError } from '../../errors'
+import { CategoryModel } from '@/domain/models/category'
+import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
+import { ServerError } from '@/presentation/errors'
 
 const makeLoadCategoriesStub = (): LoadCategories => {
   class LoadCategoriesStub implements LoadCategories {
