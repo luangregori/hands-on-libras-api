@@ -59,4 +59,20 @@ describe('Challenge Routes', () => {
       })
       .expect(200)
   })
+
+  test('Should return 403 if authenticaion fails', async () => {
+    await challengeCollection.insertOne({
+      id: 'valid_id',
+      name: 'valid_name',
+      description: 'valid_description',
+      image_url: 'valid_image_url',
+      categoryId: 'valid_category_id'
+    })
+    await request(app)
+      .post('/api/challenges')
+      .send({
+        categoryId: 'valid_category_id'
+      })
+      .expect(403)
+  })
 })
