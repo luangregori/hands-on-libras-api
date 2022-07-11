@@ -8,7 +8,7 @@ export class DbLoadChallenges implements LoadChallenges {
 
   async load (categoryId?: string): Promise<LoadChallenges.Result> {
     return categoryId
-      ? await this.findChallengesByCategoryIdRepository.findbyId(categoryId)
+      ? await this.findChallengesByCategoryIdRepository.findByCategoryId(categoryId)
       : await this.findAllChallengesRepository.findAll()
   }
 }

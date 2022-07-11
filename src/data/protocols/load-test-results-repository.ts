@@ -1,10 +1,5 @@
-export interface LoadTestResultsRepository {
-  load: (accountId: string, challengeId: string) => Promise<LoadTestResultsRepository.Result>
-}
+import { TestResultModel } from '@/domain/models/test-result'
 
-export namespace LoadTestResultsRepository {
-  export interface Result {
-    completed: boolean
-    score?: number
-  }
+export interface LoadTestResultsRepository {
+  load: (accountId: string, challengeId: string) => Promise<TestResultModel>
 }
