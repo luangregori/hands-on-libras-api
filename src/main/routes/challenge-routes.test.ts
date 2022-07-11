@@ -60,7 +60,41 @@ describe('Challenge Routes', () => {
       .expect(200)
   })
 
-  test('Should return 403 if authenticaion fails', async () => {
+  test('Should return 200 on start challenge', async () => {
+    const accessToken = await mockAccessToken()
+    const { insertedId } = await challengeCollection.insertOne({
+      id: 'valid_id',
+      name: 'valid_name',
+      description: 'valid_description',
+      image_url: 'valid_image_url',
+      categoryId: 'valid_category_id'
+    })
+    await request(app)
+      .post('/api/challenge/start')
+      .set('x-access-token', accessToken)
+      .send({
+        challengeId: insertedId
+      })
+      .expect(200)
+  })
+
+  test('Should return 403 if authenticaion fails in /challenges route', async () => {
+    await challengeCollection.insertOne({
+      id: 'valid_id',
+      name: 'valid_name',
+      description: 'valid_description',
+      image_url: 'valid_image_url',
+      categoryId: 'valid_category_id'
+    })
+    await request(app)
+      .post('/api/challenges')
+      .send({
+        categoryId: 'valid_category_id'
+      })
+      .expect(403)
+  })
+
+  test('Should return 403 if authenticaion fails in /challenge/start route', async () => {
     await challengeCollection.insertOne({
       id: 'valid_id',
       name: 'valid_name',
