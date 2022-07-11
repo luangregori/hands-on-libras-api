@@ -29,7 +29,7 @@ const makeFakeFindAllChallengesRepository = (): FindAllChallengesRepository => {
 
 const makeFindChallengesByCategoryIdRepositoryStub = (): FindChallengesByCategoryIdRepository => {
   class FindChallengesByCategoryIdRepositoryStub implements FindChallengesByCategoryIdRepository {
-    async findbyId (categoryId: string): Promise<ChallengeModel[]> {
+    async findByCategoryId (categoryId: string): Promise<ChallengeModel[]> {
       return await Promise.resolve([makeFakeChallenge()])
     }
   }
@@ -47,14 +47,14 @@ const makeFakeChallenge = (): ChallengeModel => ({
 describe('DbLoadChallenges UseCase', () => {
   test('Should call FindChallengesByCategoryIdRepository with correct value', async () => {
     const { sut, findChallengesByCategoryIdRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(findChallengesByCategoryIdRepositoryStub, 'findbyId')
+    const findSpy = jest.spyOn(findChallengesByCategoryIdRepositoryStub, 'findByCategoryId')
     await sut.load('any_category_id')
     expect(findSpy).toHaveBeenCalledWith('any_category_id')
   })
 
   test('Should throws if FindChallengesByCategoryIdRepository throws', async () => {
     const { sut, findChallengesByCategoryIdRepositoryStub } = makeSut()
-    jest.spyOn(findChallengesByCategoryIdRepositoryStub, 'findbyId').mockReturnValueOnce(Promise.reject(new Error()))
+    jest.spyOn(findChallengesByCategoryIdRepositoryStub, 'findByCategoryId').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.load('any_category_id')
     await expect(promise).rejects.toThrow()
   })
