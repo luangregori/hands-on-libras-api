@@ -1,6 +1,7 @@
 import { DbStartChallenge } from './start-challenge'
 import { ChallengeModel } from '@/domain/models/challenge'
 import { FindChallengeByIdRepository, LoadTestResultsRepository, StartChallenge } from './start-challenge-protocols'
+import { TestResultModel } from '@/domain/models/test-result'
 
 interface SutTypes {
   sut: DbStartChallenge
@@ -21,7 +22,7 @@ const makeSut = (): SutTypes => {
 
 const makeFakeFindChallengeByIdRepositoryStub = (): FindChallengeByIdRepository => {
   class FindChallengeByIdRepositoryStub implements FindChallengeByIdRepository {
-    async find (challengeId: string): Promise<ChallengeModel> {
+    async findById (challengeId: string): Promise<ChallengeModel> {
       return await Promise.resolve(makeFakeChallenge())
     }
   }
@@ -30,15 +31,20 @@ const makeFakeFindChallengeByIdRepositoryStub = (): FindChallengeByIdRepository 
 
 const makeFakeloadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
   class LoadTestResultsRepositoryStub implements LoadTestResultsRepository {
-    async load (accountId: string, challengeId: string): Promise<LoadTestResultsRepository.Result> {
-      return await Promise.resolve({
-        completed: true,
-        score: 1
-      })
+    async load (accountId: string, challengeId: string): Promise<TestResultModel> {
+      return await Promise.resolve(makeFakeTestResultModel())
     }
   }
   return new LoadTestResultsRepositoryStub()
 }
+
+const makeFakeTestResultModel = (): TestResultModel => ({
+  id: 'any_id',
+  accountId: 'any_account_id',
+  challengeId: 'any_challenge_id',
+  completed: true,
+  score: 1
+})
 
 const makeFakeChallenge = (): ChallengeModel => ({
   id: 'valid_id',
@@ -56,14 +62,14 @@ const makeFakeStartChallengeParams = (): StartChallenge.Params => ({
 describe('DbStartChallenge UseCase', () => {
   test('Should call FindChallengeByIdRepository with correct value', async () => {
     const { sut, findChallengeByIdRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(findChallengeByIdRepositoryStub, 'find')
+    const findSpy = jest.spyOn(findChallengeByIdRepositoryStub, 'findById')
     await sut.start(makeFakeStartChallengeParams())
     expect(findSpy).toHaveBeenCalledWith('valid_challenge_id')
   })
 
   test('Should throws if FindChallengeByIdRepository throws', async () => {
     const { sut, findChallengeByIdRepositoryStub } = makeSut()
-    jest.spyOn(findChallengeByIdRepositoryStub, 'find').mockReturnValueOnce(Promise.reject(new Error()))
+    jest.spyOn(findChallengeByIdRepositoryStub, 'findById').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.start(makeFakeStartChallengeParams())
     await expect(promise).rejects.toThrow()
   })
@@ -86,6 +92,6 @@ describe('DbStartChallenge UseCase', () => {
     const { sut } = makeSut()
     const result = await sut.start(makeFakeStartChallengeParams())
     expect(result.challengeInfo).toEqual(makeFakeChallenge())
-    expect(result.userInfo).toEqual({ completed: true, score: 1 })
+    expect(result.userInfo).toEqual(makeFakeTestResultModel())
   })
 })

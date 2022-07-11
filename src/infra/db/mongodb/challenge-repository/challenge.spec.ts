@@ -47,7 +47,7 @@ describe('Challenge Mongo Repository', () => {
     expect(challenges.length).toBe(0)
   })
 
-  test('Should return challenge by Id', async () => {
+  test('Should return challenge by Category Id', async () => {
     await challengeCollection.insertOne({
       id: 'valid_id',
       name: 'valid_name',
@@ -56,7 +56,7 @@ describe('Challenge Mongo Repository', () => {
       categoryId: 'valid_category_id'
     })
     const sut = makeSut()
-    const challenges = await sut.findbyId('valid_category_id')
+    const challenges = await sut.findByCategoryId('valid_category_id')
     expect(challenges).toBeDefined()
     expect(challenges.length).toBe(1)
     expect(challenges[0].id).toBeDefined()
@@ -75,7 +75,25 @@ describe('Challenge Mongo Repository', () => {
       categoryId: 'valid_category_id'
     })
     const sut = makeSut()
-    const challenges = await sut.findbyId('invalid_id')
+    const challenges = await sut.findByCategoryId('invalid_id')
     expect(challenges.length).toBe(0)
+  })
+
+  test('Should return challenge by Id', async () => {
+    const { insertedId } = await challengeCollection.insertOne({
+      id: 'valid_id',
+      name: 'valid_name',
+      description: 'valid_description',
+      image_url: 'valid_image_url',
+      categoryId: 'valid_category_id'
+    })
+    const sut = makeSut()
+    const challenges = await sut.findById(insertedId)
+    expect(challenges).toBeDefined()
+    expect(challenges.id).toBeDefined()
+    expect(challenges.name).toBe('valid_name')
+    expect(challenges.description).toBe('valid_description')
+    expect(challenges.image_url).toBe('valid_image_url')
+    expect(challenges.categoryId).toBe('valid_category_id')
   })
 })
