@@ -83,9 +83,10 @@ jobs:
     if: github.ref == 'refs/heads/master'
     needs: test
     runs-on: ubuntu-latest
-    env:
-      HEROKU_API_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
-      HEROKU_APP_NAME: "hands-on-libras-api"
     steps:
-      - name: Deploy to Heroku
-        run: git push https://heroku:$HEROKU_API_TOKEN@git.heroku.com/$HEROKU_APP_NAME.git origin/master:master
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "hands-on-libras-api"
+          heroku_email: "1116868@imed.edu.br"
