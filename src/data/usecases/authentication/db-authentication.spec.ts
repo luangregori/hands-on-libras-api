@@ -1,6 +1,7 @@
 import { AccountModel } from '@/data/usecases/add-account/db-add-account-protocols'
 import { DbAuthentication } from './db-authentication'
 import { FindAccountByEmailRepository, HashComparer, Encrypter } from './db-authentication-protocols'
+import env from '@/main/config/env'
 
 const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
   class FindAccountByEmailRepositoryStub implements FindAccountByEmailRepository {
@@ -107,7 +108,7 @@ describe('DbAuthentication Usecase', () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(makeFakeAccount())
-    expect(encryptSpy).toHaveBeenCalledWith({ id: 'valid_id', email: 'valid_email' })
+    expect(encryptSpy).toHaveBeenCalledWith({ id: 'valid_id', email: 'valid_email' }, env.jwtExpiresIn)
   })
 
   test('Should throw if Encrypter throws', async () => {
