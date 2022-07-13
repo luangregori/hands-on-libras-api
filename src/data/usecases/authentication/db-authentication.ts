@@ -1,4 +1,5 @@
 import { Authentication, FindAccountByEmailRepository, HashComparer, Encrypter } from './db-authentication-protocols'
+import env from '@/main/config/env'
 
 export class DbAuthentication implements Authentication {
   constructor (
@@ -12,9 +13,11 @@ export class DbAuthentication implements Authentication {
     if (account) {
       const isValid = await this.hashComparer.compare(authenticationParams.password, account.password)
       if (isValid) {
-        const accessToken = await this.encrypter.encrypt({ id: account.id, email: account.email })
+        const expiresIn = Number(env.jwtExpiresIn)
+        const accessToken = await this.encrypter.encrypt({ id: account.id, email: account.email }, expiresIn)
         return {
           accessToken,
+          expiresIn,
           name: account.name
         }
       }

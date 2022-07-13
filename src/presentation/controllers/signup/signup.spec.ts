@@ -41,6 +41,7 @@ const makeAuthentication = (): Authentication => {
 
 const makeFakeAuthenticationResult = (): Authentication.Result => ({
   accessToken: 'any_token',
+  expiresIn: 3600,
   name: 'any_name'
 })
 

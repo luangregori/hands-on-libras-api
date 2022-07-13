@@ -1,5 +1,5 @@
 export interface Encrypter {
-  encrypt: (payload: any) => Promise<string>
+  encrypt: (payload: any, expiresIn: number) => Promise<string>
   verify: (token: string) => Promise<Encrypter.Payload>
 }
 
