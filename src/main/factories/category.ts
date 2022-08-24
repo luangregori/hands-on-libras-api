@@ -1,9 +1,8 @@
 import { Controller } from '@/presentation/protocols'
 import { LogControllerDecorator } from '@/main/decorators/log'
-import { LogMongoRepositoiry } from '@/infra/db/mongodb/log-repository/log'
-import { LoadCategoriesController } from '@/presentation/controllers/load-categories/load-categories'
-import { DbLoadCategories } from '@/data/usecases/load-categories/load-categories'
-import { CategoryMongoRepository } from '@/infra/db/mongodb/category-repository/category'
+import { LogMongoRepositoiry, CategoryMongoRepository } from '@/infra/db'
+import { LoadCategoriesController } from '@/presentation/controllers/'
+import { DbLoadCategories } from '@/data/usecases/'
 
 export const makeFindAllCategoriesController = (): Controller => {
   const categoryMongoRepository = new CategoryMongoRepository()
