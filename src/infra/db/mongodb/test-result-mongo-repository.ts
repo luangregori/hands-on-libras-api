@@ -1,6 +1,6 @@
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
-import { LoadTestResultsRepository } from '@/data/protocols/load-test-results-repository'
-import { TestResultModel } from '@/domain/models/test-result'
+import { MongoHelper } from '@/infra/db'
+import { LoadTestResultsRepository } from '@/data/protocols'
+import { TestResultModel } from '@/domain/models'
 
 export class TestResultMongoRepository implements LoadTestResultsRepository {
   async load (accountId: string, challengeId: string): Promise<TestResultModel> {

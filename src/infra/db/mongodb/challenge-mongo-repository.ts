@@ -1,9 +1,7 @@
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
-import { FindAllChallengesRepository } from '@/data/protocols/find-all-challenges-repository'
-import { FindChallengesByCategoryIdRepository } from '@/data/protocols/find-challenges-by-category-id-repository'
-import { FindChallengeByIdRepository } from '@/data/protocols/find-challenge-by-id-repository'
-import { ChallengeModel } from '@/domain/models/challenge'
 import { ObjectId } from 'mongodb'
+import { FindAllChallengesRepository, FindChallengesByCategoryIdRepository, FindChallengeByIdRepository } from '@/data/protocols'
+import { ChallengeModel } from '@/domain/models'
+import { MongoHelper } from '@/infra/db'
 
 export class ChallengeMongoRepository implements FindAllChallengesRepository, FindChallengesByCategoryIdRepository, FindChallengeByIdRepository {
   async findAll (): Promise<ChallengeModel[]> {

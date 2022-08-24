@@ -1,6 +1,6 @@
-import { FindAllCategoriesRepository } from '@/data/protocols/find-all-categories-repository'
-import { CategoryModel } from '@/domain/models/category'
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
+import { FindAllCategoriesRepository } from '@/data/protocols'
+import { CategoryModel } from '@/domain/models'
+import { MongoHelper } from '@/infra/db'
 
 export class CategoryMongoRepository implements FindAllCategoriesRepository {
   async findAll (): Promise<CategoryModel[]> {

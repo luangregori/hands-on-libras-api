@@ -1,6 +1,5 @@
-import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 import { Collection } from 'mongodb'
-import { TestResultMongoRepository } from './test-result'
+import { MongoHelper, TestResultMongoRepository } from '@/infra/db'
 
 let testResulCollection: Collection
 
