@@ -1,12 +1,8 @@
 import { Controller } from '@/presentation/protocols'
-import { LogControllerDecorator } from '@/main/decorators/log'
-import { LogMongoRepositoiry } from '@/infra/db/mongodb/log-repository/log'
-import { LoadChallengesController } from '@/presentation/controllers/load-challenges/load-challenges'
-import { DbLoadChallenges } from '@/data/usecases/load-challenges/load-challenges'
-import { ChallengeMongoRepository } from '@/infra/db/mongodb/challenge-repository/challenge'
-import { StartChallengeController } from '@/presentation/controllers/start-challenge/start-challenge'
-import { DbStartChallenge } from '@/data/usecases/start-challenge/start-challenge'
-import { TestResultMongoRepository } from '@/infra/db/mongodb/test-result-repository/test-result'
+import { LogControllerDecorator } from '@/main/decorators'
+import { LogMongoRepositoiry, ChallengeMongoRepository, TestResultMongoRepository } from '@/infra/db'
+import { LoadChallengesController, StartChallengeController } from '@/presentation/controllers'
+import { DbLoadChallenges, DbStartChallenge } from '@/data/usecases'
 
 export const makeLoadChallengesController = (): Controller => {
   const challengeMongoRepository = new ChallengeMongoRepository()

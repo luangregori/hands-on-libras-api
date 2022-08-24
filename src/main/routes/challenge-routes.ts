@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { adaptRoute } from '@/main/adapters'
-import { auth } from '@/main/middlewares/auth'
+import { auth } from '@/main/middlewares'
 import { makeLoadChallengesController, makeStartChallengeController } from '@/main/factories/challenge'
 
 export default (router: Router): void => {

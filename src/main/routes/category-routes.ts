@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { adaptRoute } from '@/main/adapters'
-import { auth } from '@/main/middlewares/auth'
+import { auth } from '@/main/middlewares'
 import { makeFindAllCategoriesController } from '@/main/factories/category'
 
 export default (router: Router): void => {
