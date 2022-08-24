@@ -1,5 +1,5 @@
-import { LoadCategoriesController } from './load-categories'
-import { LoadCategories } from './load-categories-protocols'
+import { LoadCategoriesController } from '@/presentation/controllers'
+import { LoadCategories } from '@/domain/usecases'
 import { CategoryModel } from '@/domain/models/category'
 import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
 import { ServerError } from '@/presentation/errors'

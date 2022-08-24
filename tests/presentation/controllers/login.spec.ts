@@ -1,5 +1,5 @@
-import { LoginController } from './login'
-import { Authentication } from './login-protocols'
+import { LoginController } from '@/presentation/controllers'
+import { Authentication } from '@/domain/usecases'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { ok, serverError, badRequest, unauthorized } from '@/presentation/helpers/http-helper'
 

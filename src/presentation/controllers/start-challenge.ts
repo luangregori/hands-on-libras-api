@@ -1,6 +1,7 @@
-import { Controller, HttpResponse, StartChallenge } from './start-challenge-protocols'
+import { Controller, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError, badRequest } from '@/presentation/helpers/http-helper'
 import { MissingParamError } from '@/presentation/errors'
+import { StartChallenge } from '@/domain/usecases'
 
 export class StartChallengeController implements Controller {
   constructor (

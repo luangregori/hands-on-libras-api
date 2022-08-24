@@ -1,5 +1,6 @@
-import { Controller, HttpResponse, LoadCategories } from './load-categories-protocols'
+import { Controller, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
+import { LoadCategories } from '@/domain/usecases'
 
 export class LoadCategoriesController implements Controller {
   constructor (

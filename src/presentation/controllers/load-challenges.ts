@@ -1,5 +1,6 @@
-import { Controller, HttpResponse, LoadChallenges } from './load-challenges-protocols'
+import { Controller, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
+import { LoadChallenges } from '@/domain/usecases'
 
 export class LoadChallengesController implements Controller {
   constructor (

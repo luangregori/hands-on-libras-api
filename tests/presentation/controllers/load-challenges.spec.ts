@@ -1,5 +1,5 @@
-import { LoadChallengesController } from './load-challenges'
-import { LoadChallenges } from './load-challenges-protocols'
+import { LoadChallengesController } from '@/presentation/controllers'
+import { LoadChallenges } from '@/domain/usecases'
 import { ChallengeModel } from '@/domain/models/challenge'
 import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
 import { ServerError } from '@/presentation/errors'

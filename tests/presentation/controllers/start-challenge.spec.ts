@@ -1,7 +1,7 @@
+import { StartChallengeController } from '@/presentation/controllers'
+import { StartChallenge } from '@/domain/usecases'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
-import { StartChallengeController } from './start-challenge'
-import { StartChallenge } from './start-challenge-protocols'
 
 interface SutTypes {
   sut: StartChallengeController

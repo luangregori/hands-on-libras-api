@@ -1,4 +1,4 @@
-import { AuthMiddleware } from './auth-middleware'
+import { AuthMiddleware } from '@/presentation/middlewares/auth-middleware'
 import { AccessDeniedError } from '@/presentation/errors'
 import { forbidden, ok, serverError } from '@/presentation/helpers/http-helper'
 import { AuthUserByToken } from '@/domain/usecases/auth-user-by-token'
