@@ -3,7 +3,7 @@ import { AddAccount, AddAccountModel, CheckEmailAccount, Authentication } from '
 import { MissingParamError, InvalidParamError, ServerError, EmailAlreadyRegisteredError } from '@/presentation/errors'
 import { ok, serverError, badRequest, forbidden } from '@/presentation/helpers/http-helper'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
-import { AccountModel } from '@/domain/models/account'
+import { AccountModel } from '@/domain/models'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
