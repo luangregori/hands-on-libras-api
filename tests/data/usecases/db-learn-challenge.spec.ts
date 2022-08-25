@@ -1,15 +1,15 @@
-import { DbLearnChallenges } from '@/data/usecases'
+import { DbLearnChallenge } from '@/data/usecases'
 import { FindLearningInfoRepository } from '@/data/protocols'
 import { LearningInfoModel } from '@/domain/models'
 
 interface SutTypes{
-  sut: DbLearnChallenges
+  sut: DbLearnChallenge
   findLearningInfoRepositoryStub: FindLearningInfoRepository
 }
 
 const makeSut = (): SutTypes => {
   const findLearningInfoRepositoryStub = makeFindLearningInfoRepositoryStub()
-  const sut = new DbLearnChallenges(findLearningInfoRepositoryStub)
+  const sut = new DbLearnChallenge(findLearningInfoRepositoryStub)
   return {
     sut,
     findLearningInfoRepositoryStub

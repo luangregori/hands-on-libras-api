@@ -1,8 +1,8 @@
 import { Controller } from '@/presentation/protocols'
 import { LogControllerDecorator } from '@/main/decorators'
-import { LogMongoRepositoiry, ChallengeMongoRepository, TestResultMongoRepository } from '@/infra/db'
-import { LoadChallengesController, StartChallengeController } from '@/presentation/controllers'
-import { DbLoadChallenges, DbStartChallenge } from '@/data/usecases'
+import { LogMongoRepositoiry, ChallengeMongoRepository, TestResultMongoRepository, LearningInfoMongoRepository } from '@/infra/db'
+import { LearnChallengeController, LoadChallengesController, StartChallengeController } from '@/presentation/controllers'
+import { DbLoadChallenges, DbStartChallenge, DbLearnChallenge } from '@/data/usecases'
 
 export const makeLoadChallengesController = (): Controller => {
   const challengeMongoRepository = new ChallengeMongoRepository()
@@ -19,4 +19,12 @@ export const makeStartChallengeController = (): Controller => {
   const startChallengeController = new StartChallengeController(dbStartChallenge)
   const logMongoRepositoiry = new LogMongoRepositoiry()
   return new LogControllerDecorator(startChallengeController, logMongoRepositoiry)
+}
+
+export const makeLearnChallengeController = (): Controller => {
+  const findLearningInfoRepository = new LearningInfoMongoRepository()
+  const dbLearnChallenge = new DbLearnChallenge(findLearningInfoRepository)
+  const learnChallengeController = new LearnChallengeController(dbLearnChallenge)
+  const logMongoRepositoiry = new LogMongoRepositoiry()
+  return new LogControllerDecorator(learnChallengeController, logMongoRepositoiry)
 }

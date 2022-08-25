@@ -1,7 +1,7 @@
 import { LearnChallenge } from '@/domain/usecases'
 import { FindLearningInfoRepository } from '@/data/protocols'
 
-export class DbLearnChallenges implements LearnChallenge {
+export class DbLearnChallenge implements LearnChallenge {
   constructor (
     private readonly findLearningInfoRepository: FindLearningInfoRepository
   ) {}
