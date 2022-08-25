@@ -1,3 +1,4 @@
+export * from './learn-challenge'
 export * from './load-categories'
 export * from './load-challenges'
 export * from './login'
