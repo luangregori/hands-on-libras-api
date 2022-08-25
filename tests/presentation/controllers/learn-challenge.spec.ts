@@ -26,12 +26,12 @@ const makeLearnChallengeStub = (): LearnChallenge => {
   return new LearnChallengeStub()
 }
 
-const makeFakeLearnChallengeResult = (): LearnChallenge.Result => ({
+const makeFakeLearnChallengeResult = (): LearnChallenge.Result => ([{
   id: 'any_id',
   description: 'any_description',
   word: 'any_word',
   challengeId: 'any_challenge_id'
-})
+}])
 
 const makeFakeRequest = (): LearnChallengeController.Request => ({
   challengeId: 'valid_id',
