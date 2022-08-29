@@ -1,7 +1,7 @@
 import { LoadChallengesController } from '@/presentation/controllers'
 import { LoadChallenges } from '@/domain/usecases'
 import { ChallengeModel } from '@/domain/models/challenge'
-import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
+import { ok, serverError } from '@/presentation/helpers/http-helper'
 import { ServerError } from '@/presentation/errors'
 
 interface SutTypes{
@@ -56,16 +56,16 @@ describe('Load Challenges Controller', () => {
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
-  test('Should return 204 if not exists any challenge', async () => {
+  test('Should return 200 even not exists any challenge', async () => {
     const { sut, loadChallengesStub } = makeSut()
     jest.spyOn(loadChallengesStub, 'load').mockImplementationOnce(async () => {
       return await Promise.resolve([])
     })
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(noContent())
+    expect(httpResponse).toEqual(ok([]))
   })
 
-  test('Should return 200 if exists challenges', async () => {
+  test('Should return 200 on success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok([makeFakeChallenge()]))

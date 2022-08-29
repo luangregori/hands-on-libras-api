@@ -1,5 +1,5 @@
 import { Controller, HttpResponse } from '@/presentation/protocols'
-import { ok, serverError, noContent } from '@/presentation/helpers/http-helper'
+import { ok, serverError } from '@/presentation/helpers/http-helper'
 import { LoadChallenges } from '@/domain/usecases'
 
 export class LoadChallengesController implements Controller {
@@ -10,7 +10,7 @@ export class LoadChallengesController implements Controller {
   async handle (request: LoadChallengesController.Request): Promise<HttpResponse> {
     try {
       const challenges = await this.loadChallenges.load(request.categoryId)
-      return challenges.length ? ok(challenges) : noContent()
+      return ok(challenges)
     } catch (error) {
       return serverError(error)
     }
