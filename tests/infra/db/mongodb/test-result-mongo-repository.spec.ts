@@ -1,7 +1,7 @@
 import { Collection } from 'mongodb'
 import { MongoHelper, TestResultMongoRepository } from '@/infra/db'
 
-let testResulCollection: Collection
+let testResultCollection: Collection
 
 describe('Test Result Mongo Repository', () => {
   beforeAll(async () => {
@@ -13,8 +13,8 @@ describe('Test Result Mongo Repository', () => {
   })
 
   beforeEach(async () => {
-    testResulCollection = await MongoHelper.getCollection('test-results')
-    await testResulCollection.deleteMany({})
+    testResultCollection = await MongoHelper.getCollection('test-results')
+    await testResultCollection.deleteMany({})
   })
 
   const makeSut = (): TestResultMongoRepository => {
@@ -22,25 +22,29 @@ describe('Test Result Mongo Repository', () => {
   }
 
   test('Should return an test result', async () => {
-    await testResulCollection.insertOne({
+    await testResultCollection.insertOne({
       id: 'valid_id',
       accountId: 'valid_account_id',
       challengeId: 'valid_challenge_id',
-      completed: true,
+      status: 'completed',
       score: '900'
     })
     const sut = makeSut()
-    const result = await sut.load('valid_account_id', 'valid_challenge_id')
+    const result = await sut.findOrCreate('valid_account_id', 'valid_challenge_id')
     expect(result).toBeDefined()
     expect(result.accountId).toBe('valid_account_id')
     expect(result.challengeId).toBe('valid_challenge_id')
-    expect(result.completed).toBeTruthy()
+    expect(result.status).toBe('completed')
     expect(result.score).toBe('900')
   })
 
-  test('Should return null on load', async () => {
+  test('Should create an test result', async () => {
     const sut = makeSut()
-    const results = await sut.load('any_id', 'any_id')
-    expect(results).toBeUndefined()
+    const result = await sut.findOrCreate('valid_account_id', 'valid_challenge_id')
+    expect(result).toBeDefined()
+    expect(result.accountId).toBe('valid_account_id')
+    expect(result.challengeId).toBe('valid_challenge_id')
+    expect(result.status).toBe('started')
+    expect(result.score).toBeUndefined()
   })
 })

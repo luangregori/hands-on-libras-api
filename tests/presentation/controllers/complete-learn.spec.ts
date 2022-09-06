@@ -19,7 +19,7 @@ const makeSut = (): SutTypes => {
 
 const makeCompleteLearnStub = (): CompleteLearn => {
   class CompleteLearnStub implements CompleteLearn {
-    async complete (challengeId: string): Promise<boolean> {
+    async complete (completeLearnParams: CompleteLearn.Params): Promise<boolean> {
       return await new Promise(resolve => resolve(true))
     }
   }
@@ -46,7 +46,10 @@ describe('Complete Learn Controller', () => {
     const { sut, completeLearnStub } = makeSut()
     const completeSpy = jest.spyOn(completeLearnStub, 'complete')
     await sut.handle(makeFakeRequest())
-    expect(completeSpy).toHaveBeenCalledWith('valid_id')
+    expect(completeSpy).toHaveBeenCalledWith({
+      challengeId: 'valid_id',
+      accountId: 'valid_account_id'
+    })
   })
 
   test('Should return 500 if CompleteLearn UseCase throws', async () => {

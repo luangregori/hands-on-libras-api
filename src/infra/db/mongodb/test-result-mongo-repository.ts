@@ -1,11 +1,20 @@
 import { MongoHelper } from '@/infra/db'
 import { LoadTestResultsRepository } from '@/data/protocols'
-import { TestResultModel } from '@/domain/models'
+import { TestResultModel, StatusTestResult } from '@/domain/models'
 
 export class TestResultMongoRepository implements LoadTestResultsRepository {
-  async load (accountId: string, challengeId: string): Promise<TestResultModel> {
+  async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
     const testResultsCollection = await MongoHelper.getCollection('test-results')
-    const result = await testResultsCollection.findOne({ accountId, challengeId })
-    if (result) return MongoHelper.map(result)
+    let result = await testResultsCollection.findOne({ accountId, challengeId })
+    if (result) {
+      return MongoHelper.map(result)
+    }
+    const newTestResult = {
+      accountId,
+      challengeId,
+      status: StatusTestResult.STARTED
+    }
+    result = await testResultsCollection.insertOne(newTestResult)
+    return MongoHelper.map(result.ops[0])
   }
 }

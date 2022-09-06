@@ -1,3 +1,10 @@
 export interface CompleteLearn {
-  complete: (challengeId: string) => Promise<boolean>
+  complete: (completeLearnParams: CompleteLearn.Params) => Promise<boolean>
+}
+
+export namespace CompleteLearn {
+  export interface Params {
+    challengeId: string
+    accountId: string
+  }
 }

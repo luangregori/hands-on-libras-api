@@ -1,4 +1,5 @@
 import { ChallengeModel } from '../models/challenge'
+import { TestResultModel } from '../models/test-result'
 
 export interface StartChallenge {
   start: (startChallengeParams: StartChallenge.Params) => Promise<StartChallenge.Result>
@@ -12,9 +13,6 @@ export namespace StartChallenge {
 
   export interface Result {
     challengeInfo: ChallengeModel
-    userInfo: {
-      completed: boolean
-      score?: number
-    }
+    userInfo: TestResultModel
   }
 }

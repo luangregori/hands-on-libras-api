@@ -2,6 +2,7 @@ import { StartChallengeController } from '@/presentation/controllers'
 import { StartChallenge } from '@/domain/usecases'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
+import { StatusTestResult } from '@/domain/models'
 
 interface SutTypes {
   sut: StartChallengeController
@@ -35,8 +36,11 @@ const makeFakeStartChallengeResult = (): StartChallenge.Result => ({
     categoryId: 'valid_category_id'
   },
   userInfo: {
-    completed: true,
-    score: 1
+    id: 'valid_id',
+    accountId: 'valid_account_id',
+    challengeId: 'valid_challenge_id',
+    status: StatusTestResult.COMPLETED,
+    score: 0
   }
 })
 

@@ -17,7 +17,9 @@ export class CompleteLearnController implements Controller {
         }
       }
 
-      await this.completeLearn.complete(request.challengeId)
+      const completeLearnParams: CompleteLearn.Params = request
+
+      await this.completeLearn.complete(completeLearnParams)
 
       return ok()
     } catch (error) {
