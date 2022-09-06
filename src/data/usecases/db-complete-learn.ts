@@ -9,12 +9,7 @@ export class DbCompleteLearn implements CompleteLearn {
 
   async complete (completeLearnParams: CompleteLearn.Params): Promise<boolean> {
     const { accountId, challengeId } = completeLearnParams
-    const testResultToUpdate = {
-      accountId,
-      challengeId,
-      status: StatusTestResult.STARTED
-    }
-    await this.updateTestResultsRepository.update(testResultToUpdate)
+    await this.updateTestResultsRepository.update(accountId, challengeId, 'status', StatusTestResult.LEARNED)
     return true
   }
 }

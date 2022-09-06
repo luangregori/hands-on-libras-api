@@ -44,11 +44,7 @@ describe('Complete Learn UseCase', () => {
     const { sut, updateTestResultRepositoryStub } = makeSut()
     const findSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
     await sut.complete(makeFakeCompleteLearnParams())
-    expect(findSpy).toHaveBeenCalledWith({
-      accountId: 'valid_account_id',
-      challengeId: 'valid_challenge_id',
-      status: 'started'
-    })
+    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_challenge_id', 'status', 'learned')
   })
 
   test('Should throws if UpdateTestResultRepositoryStub throws', async () => {
