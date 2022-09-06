@@ -78,7 +78,7 @@ describe('Challenge Routes', () => {
       .expect(200)
   })
 
-  test('Should return 403 if authenticaion fails in /challenges route', async () => {
+  test('Should return 403 if authentication fails in /challenges route', async () => {
     await challengeCollection.insertOne({
       id: 'valid_id',
       name: 'valid_name',
@@ -94,7 +94,7 @@ describe('Challenge Routes', () => {
       .expect(403)
   })
 
-  test('Should return 403 if authenticaion fails in /challenge/start route', async () => {
+  test('Should return 403 if authentication fails in /challenge/start route', async () => {
     await challengeCollection.insertOne({
       id: 'valid_id',
       name: 'valid_name',
