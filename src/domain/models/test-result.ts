@@ -2,6 +2,13 @@ export interface TestResultModel {
   id: string
   accountId: string
   challengeId: string
-  completed: boolean
+  status: StatusTestResult
   score?: number
+}
+
+export enum StatusTestResult {
+  STARTED = 'started',
+  LEARNED = 'learned',
+  TESTED = 'tested',
+  COMPLETED = 'completed'
 }

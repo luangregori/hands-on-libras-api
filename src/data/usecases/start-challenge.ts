@@ -10,8 +10,7 @@ export class DbStartChallenge implements StartChallenge {
   async start (params: StartChallenge.Params): Promise<StartChallenge.Result> {
     const challengeInfo = await this.findChallengeByIdRepository.findById(params.challengeId)
 
-    // TODO: talvez tenha que fazer que carregar mais dados do banco?
-    const userInfo = await this.loadTestResultsRepository.load(params.accountId, params.challengeId)
+    const userInfo = await this.loadTestResultsRepository.findOrCreate(params.accountId, params.challengeId)
 
     return {
       challengeInfo,
