@@ -46,7 +46,7 @@ describe('Test Result Mongo Repository', () => {
       expect(result.accountId).toBe('valid_account_id')
       expect(result.challengeId).toBe('valid_challenge_id')
       expect(result.status).toBe('started')
-      expect(result.score).toBeUndefined()
+      expect(result.score).toBe(0)
     })
   })
 

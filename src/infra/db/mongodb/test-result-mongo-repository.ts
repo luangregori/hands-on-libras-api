@@ -12,13 +12,14 @@ export class TestResultMongoRepository implements LoadTestResultsRepository, Upd
     const newTestResult = {
       accountId,
       challengeId,
-      status: StatusTestResult.STARTED
+      status: StatusTestResult.STARTED,
+      score: 0
     }
     result = await testResultsCollection.insertOne(newTestResult)
     return MongoHelper.map(result.ops[0])
   }
 
-  async update (accountId: string, challengeId: string, keyToUpdate: string, valueToUpdate: string): Promise<TestResultModel> {
+  async update (accountId: string, challengeId: string, keyToUpdate: string, valueToUpdate: any): Promise<TestResultModel> {
     const testResultsCollection = await MongoHelper.getCollection('test-results')
     const objectToUpdate = { [keyToUpdate]: valueToUpdate }
     const result = await testResultsCollection.findOneAndUpdate({ accountId, challengeId }, { $set: objectToUpdate }, { returnOriginal: false })
