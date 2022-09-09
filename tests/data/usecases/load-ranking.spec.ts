@@ -1,6 +1,6 @@
 import { DbLoadRanking } from '@/data/usecases'
-import { LoadTestResultsRepository } from '@/data/protocols'
-import { StatusTestResult, TestResultModel } from '@/domain/models'
+import { LoadTestResultsRepository, FindAccountRepository } from '@/data/protocols'
+import { AccountModel, StatusTestResult, TestResultModel } from '@/domain/models'
 import { LoadRanking } from '@/domain/usecases'
 
 const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
@@ -16,6 +16,19 @@ const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
   return new LoadTestResultsRepositoryStub()
 }
 
+const makeFindAccountRepositoryStub = (): FindAccountRepository => {
+  class FindAccountRepositoryStub implements FindAccountRepository {
+    async findById (accountId: string): Promise<AccountModel> {
+      return await new Promise(resolve => resolve(makeFakeAccount()))
+    }
+
+    async findByEmail (email: string): Promise<AccountModel> {
+      throw new Error('Method not implemented.')
+    }
+  }
+  return new FindAccountRepositoryStub()
+}
+
 const makeFakeTestResultModel = (): TestResultModel => ({
   id: 'any_id',
   accountId: 'any_account_id',
@@ -25,17 +38,27 @@ const makeFakeTestResultModel = (): TestResultModel => ({
   updatedAt: new Date()
 })
 
-interface SutTypes{
+const makeFakeAccount = (): AccountModel => ({
+  id: 'any_account_id',
+  name: 'any_name',
+  email: 'any_email',
+  password: 'any_password'
+})
+
+interface SutTypes {
   sut: DbLoadRanking
   loadTestResultsRepositoryStub: LoadTestResultsRepository
+  findAccountRepositoryStub: FindAccountRepository
 }
 
 const makeSut = (): SutTypes => {
+  const findAccountRepositoryStub = makeFindAccountRepositoryStub()
   const loadTestResultsRepositoryStub = makeLoadTestResultsRepositoryStub()
-  const sut = new DbLoadRanking(loadTestResultsRepositoryStub)
+  const sut = new DbLoadRanking(loadTestResultsRepositoryStub, findAccountRepositoryStub)
   return {
     sut,
-    loadTestResultsRepositoryStub
+    loadTestResultsRepositoryStub,
+    findAccountRepositoryStub
   }
 }
 
@@ -45,11 +68,15 @@ const makeFakeParams = (): LoadRanking.Params => ({
 })
 
 describe('DbLoadRanking UseCase', () => {
+  beforeAll(() => {
+    jest.useFakeTimers('modern').setSystemTime(new Date(2022, 6, 10))
+  })
+
   test('Should call LoadTestResultsRepository with correct values', async () => {
     const { sut, loadTestResultsRepositoryStub } = makeSut()
     const findSpy = jest.spyOn(loadTestResultsRepositoryStub, 'findByDate')
     await sut.load(makeFakeParams())
-    expect(findSpy).toHaveBeenCalledTimes(1)
+    expect(findSpy).toHaveBeenCalledWith('any_account_id', new Date(2022, 6, 9))
   })
 
   test('Should throws if LoadTestResultsRepository throws', async () => {
@@ -57,6 +84,13 @@ describe('DbLoadRanking UseCase', () => {
     jest.spyOn(loadTestResultsRepositoryStub, 'findByDate').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.load(makeFakeParams())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call FindAccountRepository with correct values', async () => {
+    const { sut, findAccountRepositoryStub } = makeSut()
+    const findSpy = jest.spyOn(findAccountRepositoryStub, 'findById')
+    await sut.load(makeFakeParams())
+    expect(findSpy).toHaveBeenCalledWith('any_account_id')
   })
 
   test('Should return the ranking sorted by score', async () => {
