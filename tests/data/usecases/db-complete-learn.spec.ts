@@ -43,7 +43,8 @@ const makeFakeTestResultModel = (status = StatusTestResult.STARTED): TestResultM
   accountId: 'any_account_id',
   challengeId: 'any_challenge_id',
   status,
-  score: 1
+  score: 1,
+  updatedAt: new Date()
 })
 
 const makeFakeCompleteLearnParams = (): CompleteLearn.Params => ({

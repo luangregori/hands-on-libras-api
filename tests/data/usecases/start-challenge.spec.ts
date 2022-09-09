@@ -43,7 +43,8 @@ const makeFakeTestResultModel = (): TestResultModel => ({
   accountId: 'any_account_id',
   challengeId: 'any_challenge_id',
   status: StatusTestResult.COMPLETED,
-  score: 1
+  score: 1,
+  updatedAt: new Date(2022, 0, 0)
 })
 
 const makeFakeChallenge = (): ChallengeModel => ({

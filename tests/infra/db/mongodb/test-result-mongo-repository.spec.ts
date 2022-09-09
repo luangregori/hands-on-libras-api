@@ -56,13 +56,14 @@ describe('Test Result Mongo Repository', () => {
         id: 'valid_id',
         accountId: 'valid_account_id',
         challengeId: 'valid_challenge_id',
-        status: 'completed',
-        score: '900'
+        status: 'started',
+        score: 900
       })
       const sut = makeSut()
-      const result = await sut.update('valid_account_id', 'valid_challenge_id', 'score', '1000')
+      const result = await sut.update('valid_account_id', 'valid_challenge_id', { score: 1000, status: 'completed' })
       expect(result).toBeDefined()
-      expect(result.score).toBe('1000')
+      expect(result.score).toBe(1000)
+      expect(result.status).toBe('completed')
     })
   })
 })
