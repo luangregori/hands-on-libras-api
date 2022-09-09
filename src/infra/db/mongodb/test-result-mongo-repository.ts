@@ -25,7 +25,7 @@ export class TestResultMongoRepository implements LoadTestResultsRepository, Upd
     const result = await testResultsCollection.find({
       accountId,
       updatedAt: {
-        $gte: date.toISOString()
+        $gte: date
       }
     }).toArray()
     return result.map(MongoHelper.map)

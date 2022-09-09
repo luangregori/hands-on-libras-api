@@ -42,7 +42,7 @@ describe('Category Routes', () => {
       .expect(200)
   })
 
-  test('Should return 403 if authenticaion fails', async () => {
+  test('Should return 403 if authentication fails', async () => {
     await categoryCollection.insertOne({
       id: 'any_id',
       name: 'any_name'

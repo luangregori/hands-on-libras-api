@@ -109,4 +109,14 @@ describe('Challenge Routes', () => {
       })
       .expect(403)
   })
+
+  test('Should return 400 if no challengeId is provided in /challenge/start route', async () => {
+    const accessToken = await mockAccessToken()
+
+    await request(app)
+      .post('/api/challenge/start')
+      .set('x-access-token', accessToken)
+      .send()
+      .expect(400)
+  })
 })
