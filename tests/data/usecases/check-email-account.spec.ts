@@ -1,15 +1,19 @@
 import { AccountModel } from '@/domain/models'
 import { CheckEmailAccount } from '@/domain/usecases'
 import { DbCheckEmailAccount } from '@/data/usecases'
-import { FindAccountByEmailRepository } from '@/data/protocols'
+import { FindAccountRepository } from '@/data/protocols'
 
-const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
-  class FindAccountByEmailRepositoryStub implements FindAccountByEmailRepository {
-    async find (email: string): Promise<AccountModel> {
+const makeFindAccountRepository = (): FindAccountRepository => {
+  class FindAccountRepositoryStub implements FindAccountRepository {
+    async findByEmail (email: string): Promise<AccountModel> {
+      return await Promise.resolve(makeFakeAccount())
+    }
+
+    async findById (accountId: string): Promise<AccountModel> {
       return await Promise.resolve(makeFakeAccount())
     }
   }
-  return new FindAccountByEmailRepositoryStub()
+  return new FindAccountRepositoryStub()
 }
 
 const makeFakeAccount = (): AccountModel => ({
@@ -21,29 +25,29 @@ const makeFakeAccount = (): AccountModel => ({
 
 interface SutTypes {
   sut: CheckEmailAccount
-  findAccountByEmailRepositoryStub: FindAccountByEmailRepository
+  findAccountRepositoryStub: FindAccountRepository
 }
 
 const makeSut = (): SutTypes => {
-  const findAccountByEmailRepositoryStub = makeFindAccountByEmailRepository()
-  const sut = new DbCheckEmailAccount(findAccountByEmailRepositoryStub)
+  const findAccountRepositoryStub = makeFindAccountRepository()
+  const sut = new DbCheckEmailAccount(findAccountRepositoryStub)
   return {
     sut,
-    findAccountByEmailRepositoryStub
+    findAccountRepositoryStub
   }
 }
 
 describe('DbAddAccount Usecase', () => {
-  test('Should call FindAccountByEmailRepository with correct values', async () => {
-    const { sut, findAccountByEmailRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(findAccountByEmailRepositoryStub, 'find')
+  test('Should call FindAccountRepository with correct values', async () => {
+    const { sut, findAccountRepositoryStub } = makeSut()
+    const findSpy = jest.spyOn(findAccountRepositoryStub, 'findByEmail')
     await sut.check('valid_email')
     expect(findSpy).toHaveBeenCalledWith('valid_email')
   })
 
-  test('Should throw if FindAccountByEmailRepository throws', async () => {
-    const { sut, findAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(findAccountByEmailRepositoryStub, 'find').mockReturnValueOnce(Promise.reject(new Error()))
+  test('Should throw if FindAccountRepository throws', async () => {
+    const { sut, findAccountRepositoryStub } = makeSut()
+    jest.spyOn(findAccountRepositoryStub, 'findByEmail').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.check('valid_email')
     await expect(promise).rejects.toThrow()
   })

@@ -35,14 +35,28 @@ describe('Account Mongo Repository', () => {
     expect(account.password).toBe('any_password')
   })
 
-  test('Should return an account on find successfully', async () => {
+  test('Should return an account on find by email successfully', async () => {
     await accountCollection.insertOne({
       name: 'any_name',
       email: 'any_mail@mail.com',
       password: 'any_hash'
     })
     const sut = makeSut()
-    const account = await sut.find('any_mail@mail.com')
+    const account = await sut.findByEmail('any_mail@mail.com')
+    expect(account).toBeTruthy()
+    expect(account.id).toBeTruthy()
+    expect(account.name).toBe('any_name')
+    expect(account.email).toBe('any_mail@mail.com')
+    expect(account.password).toBe('any_hash')
+  })
+  test('Should return an account on find by id successfully', async () => {
+    const { insertedId } = await accountCollection.insertOne({
+      name: 'any_name',
+      email: 'any_mail@mail.com',
+      password: 'any_hash'
+    })
+    const sut = makeSut()
+    const account = await sut.findById(insertedId)
     expect(account).toBeTruthy()
     expect(account.id).toBeTruthy()
     expect(account.name).toBe('any_name')

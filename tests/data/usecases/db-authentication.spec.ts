@@ -1,15 +1,19 @@
 import { AccountModel } from '@/domain/models'
 import { DbAuthentication } from '@/data/usecases'
-import { FindAccountByEmailRepository, HashComparer, Encrypter } from '@/data/protocols'
+import { FindAccountRepository, HashComparer, Encrypter } from '@/data/protocols'
 import env from '@/main/config/env'
 
-const makeFindAccountByEmailRepository = (): FindAccountByEmailRepository => {
-  class FindAccountByEmailRepositoryStub implements FindAccountByEmailRepository {
-    async find (email: string): Promise<AccountModel> {
+const makeFindAccountRepository = (): FindAccountRepository => {
+  class FindAccountRepositoryStub implements FindAccountRepository {
+    async findByEmail (email: string): Promise<AccountModel> {
+      return await Promise.resolve(makeFakeAccount())
+    }
+
+    async findById (accountId: string): Promise<AccountModel> {
       return await Promise.resolve(makeFakeAccount())
     }
   }
-  return new FindAccountByEmailRepositoryStub()
+  return new FindAccountRepositoryStub()
 }
 
 const makeHashComparer = (): HashComparer => {
@@ -43,42 +47,42 @@ const makeFakeAccount = (): AccountModel => ({
 
 interface SutTypes {
   sut: DbAuthentication
-  findAccountByEmailRepositoryStub: FindAccountByEmailRepository
+  findAccountRepositoryStub: FindAccountRepository
   hashComparerStub: HashComparer
   encrypterStub: Encrypter
 }
 
 const makeSut = (): SutTypes => {
-  const findAccountByEmailRepositoryStub = makeFindAccountByEmailRepository()
+  const findAccountRepositoryStub = makeFindAccountRepository()
   const hashComparerStub = makeHashComparer()
   const encrypterStub = makeEncrypter()
-  const sut = new DbAuthentication(findAccountByEmailRepositoryStub, hashComparerStub, encrypterStub)
+  const sut = new DbAuthentication(findAccountRepositoryStub, hashComparerStub, encrypterStub)
   return {
     sut,
-    findAccountByEmailRepositoryStub,
+    findAccountRepositoryStub,
     hashComparerStub,
     encrypterStub
   }
 }
 
 describe('DbAuthentication Usecase', () => {
-  test('Should call FindAccountByEmailRepository with correct values', async () => {
-    const { sut, findAccountByEmailRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(findAccountByEmailRepositoryStub, 'find')
+  test('Should call FindAccountRepository with correct values', async () => {
+    const { sut, findAccountRepositoryStub } = makeSut()
+    const findSpy = jest.spyOn(findAccountRepositoryStub, 'findByEmail')
     await sut.auth(makeFakeAccount())
     expect(findSpy).toHaveBeenCalledWith('valid_email')
   })
 
-  test('Should throw if FindAccountByEmailRepository throws', async () => {
-    const { sut, findAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(findAccountByEmailRepositoryStub, 'find').mockReturnValueOnce(Promise.reject(new Error()))
+  test('Should throw if FindAccountRepository throws', async () => {
+    const { sut, findAccountRepositoryStub } = makeSut()
+    jest.spyOn(findAccountRepositoryStub, 'findByEmail').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.auth(makeFakeAccount())
     await expect(promise).rejects.toThrow()
   })
 
   test('Should return null if email not exists in database', async () => {
-    const { sut, findAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(findAccountByEmailRepositoryStub, 'find').mockReturnValueOnce(Promise.resolve(null))
+    const { sut, findAccountRepositoryStub } = makeSut()
+    jest.spyOn(findAccountRepositoryStub, 'findByEmail').mockReturnValueOnce(Promise.resolve(null))
     const authenticationModel = await sut.auth(makeFakeAccount())
     expect(authenticationModel).toBeNull()
   })

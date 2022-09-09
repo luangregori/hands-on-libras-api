@@ -1,5 +1,6 @@
 import { AccountModel } from '@/domain/models'
 
-export interface FindAccountByEmailRepository{
-  find: (email: string) => Promise<AccountModel>
+export interface FindAccountRepository{
+  findByEmail: (email: string) => Promise<AccountModel>
+  findById: (accountId: string) => Promise<AccountModel>
 }
