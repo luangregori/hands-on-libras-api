@@ -34,6 +34,10 @@ const makeFakeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
     async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
       return await Promise.resolve(makeFakeTestResultModel())
     }
+
+    async findByDate (accountId: string, date: Date): Promise<TestResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
   }
   return new LoadTestResultsRepositoryStub()
 }
