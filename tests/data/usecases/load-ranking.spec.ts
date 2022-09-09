@@ -5,8 +5,8 @@ import { LoadRanking } from '@/domain/usecases'
 
 const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
   class LoadTestResultsRepositoryStub implements LoadTestResultsRepository {
-    async findByDate (accountId: string, date: Date): Promise<TestResultModel[]> {
-      return await new Promise(resolve => resolve([makeFakeTestResultModel(), makeFakeTestResultModel()]))
+    async findByDate (date: Date): Promise<TestResultModel[]> {
+      return await new Promise(resolve => resolve([makeFakeTestResultModel(), makeFakeTestResultModel('another_id')]))
     }
 
     async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
@@ -29,9 +29,9 @@ const makeFindAccountRepositoryStub = (): FindAccountRepository => {
   return new FindAccountRepositoryStub()
 }
 
-const makeFakeTestResultModel = (): TestResultModel => ({
+const makeFakeTestResultModel = (accountId: string = 'any_account_id'): TestResultModel => ({
   id: 'any_id',
-  accountId: 'any_account_id',
+  accountId,
   challengeId: 'any_challenge_id',
   status: StatusTestResult.COMPLETED,
   score: Math.floor(Math.random() * 1000) + 1,
@@ -63,7 +63,6 @@ const makeSut = (): SutTypes => {
 }
 
 const makeFakeParams = (): LoadRanking.Params => ({
-  accountId: 'any_account_id',
   days: 1
 })
 
@@ -76,7 +75,7 @@ describe('DbLoadRanking UseCase', () => {
     const { sut, loadTestResultsRepositoryStub } = makeSut()
     const findSpy = jest.spyOn(loadTestResultsRepositoryStub, 'findByDate')
     await sut.load(makeFakeParams())
-    expect(findSpy).toHaveBeenCalledWith('any_account_id', new Date(2022, 6, 9))
+    expect(findSpy).toHaveBeenCalledWith(new Date(2022, 6, 9))
   })
 
   test('Should throws if LoadTestResultsRepository throws', async () => {

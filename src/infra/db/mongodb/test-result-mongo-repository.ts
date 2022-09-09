@@ -20,14 +20,13 @@ export class TestResultMongoRepository implements LoadTestResultsRepository, Upd
     return MongoHelper.map(result.ops[0])
   }
 
-  async findByDate (accountId: string, date: Date): Promise<TestResultModel[]> {
+  async findByDate (date: Date): Promise<TestResultModel[]> {
     const testResultsCollection = await MongoHelper.getCollection('test-results')
     const result = await testResultsCollection.find({
-      accountId,
       updatedAt: {
         $gte: date
       }
-    }).toArray()
+    }).limit(20).toArray()
     return result.map(MongoHelper.map)
   }
 

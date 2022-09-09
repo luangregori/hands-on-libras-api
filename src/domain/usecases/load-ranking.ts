@@ -5,7 +5,6 @@ export interface LoadRanking {
 export namespace LoadRanking {
   export interface Params {
     days: number
-    accountId: string
   }
 
   export interface Result {
