@@ -40,7 +40,8 @@ const makeFakeStartChallengeResult = (): StartChallenge.Result => ({
     accountId: 'valid_account_id',
     challengeId: 'valid_challenge_id',
     status: StatusTestResult.COMPLETED,
-    score: 0
+    score: 0,
+    updatedAt: new Date(2022, 0, 0)
   }
 })
 

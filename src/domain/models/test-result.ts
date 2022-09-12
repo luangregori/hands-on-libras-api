@@ -3,7 +3,8 @@ export interface TestResultModel {
   accountId: string
   challengeId: string
   status: StatusTestResult
-  score?: number
+  score: number
+  updatedAt: Date
 }
 
 export enum StatusTestResult {

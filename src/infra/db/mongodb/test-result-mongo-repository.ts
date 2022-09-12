@@ -13,16 +13,32 @@ export class TestResultMongoRepository implements LoadTestResultsRepository, Upd
       accountId,
       challengeId,
       status: StatusTestResult.STARTED,
-      score: 0
+      score: 0,
+      updatedAt: new Date()
     }
     result = await testResultsCollection.insertOne(newTestResult)
     return MongoHelper.map(result.ops[0])
   }
 
-  async update (accountId: string, challengeId: string, keyToUpdate: string, valueToUpdate: any): Promise<TestResultModel> {
+  async findByDate (date: Date): Promise<TestResultModel[]> {
     const testResultsCollection = await MongoHelper.getCollection('test-results')
-    const objectToUpdate = { [keyToUpdate]: valueToUpdate }
-    const result = await testResultsCollection.findOneAndUpdate({ accountId, challengeId }, { $set: objectToUpdate }, { returnOriginal: false })
+    const result = await testResultsCollection.find({
+      updatedAt: {
+        $gte: date
+      }
+    }).limit(20).toArray()
+    return result.map(MongoHelper.map)
+  }
+
+  async update (accountId: string, challengeId: string, updateTestResult: any): Promise<TestResultModel> {
+    const testResultsCollection = await MongoHelper.getCollection('test-results')
+    const set = { updatedAt: new Date() }
+
+    for (const field in updateTestResult) {
+      set[field] = updateTestResult[field]
+    }
+
+    const result = await testResultsCollection.findOneAndUpdate({ accountId, challengeId }, { $set: set }, { returnOriginal: false })
     if (result.ok) return MongoHelper.map(result.value)
   }
 }

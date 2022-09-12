@@ -1,16 +1,16 @@
-import { FindAccountByEmailRepository, HashComparer, Encrypter } from '@/data/protocols'
+import { FindAccountRepository, HashComparer, Encrypter } from '@/data/protocols'
 import { Authentication } from '@/domain/usecases'
 import env from '@/main/config/env'
 
 export class DbAuthentication implements Authentication {
   constructor (
-    private readonly findAccountByEmailRepository: FindAccountByEmailRepository,
+    private readonly findAccountRepository: FindAccountRepository,
     private readonly hashComparer: HashComparer,
     private readonly encrypter: Encrypter
   ) {}
 
   async auth (authenticationParams: Authentication.Params): Promise<Authentication.Result> {
-    const account = await this.findAccountByEmailRepository.find(authenticationParams.email)
+    const account = await this.findAccountRepository.findByEmail(authenticationParams.email)
     if (account) {
       const isValid = await this.hashComparer.compare(authenticationParams.password, account.password)
       if (isValid) {

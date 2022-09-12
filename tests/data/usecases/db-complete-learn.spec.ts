@@ -25,6 +25,10 @@ const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
     async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
       return await new Promise(resolve => resolve(makeFakeTestResultModel()))
     }
+
+    async findByDate (date: Date): Promise<TestResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
   }
   return new LoadTestResultsRepositoryStub()
 }
@@ -43,7 +47,8 @@ const makeFakeTestResultModel = (status = StatusTestResult.STARTED): TestResultM
   accountId: 'any_account_id',
   challengeId: 'any_challenge_id',
   status,
-  score: 1
+  score: 0,
+  updatedAt: new Date()
 })
 
 const makeFakeCompleteLearnParams = (): CompleteLearn.Params => ({
@@ -63,7 +68,7 @@ describe('Complete Learn UseCase', () => {
     const { sut, updateTestResultRepositoryStub } = makeSut()
     const updateSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
     await sut.complete(makeFakeCompleteLearnParams())
-    expect(updateSpy).toHaveBeenCalledTimes(2)
+    expect(updateSpy).toHaveBeenCalledTimes(1)
   })
 
   test('Should not call UpdateTestResultRepositoryStub if STATUS != STARTED', async () => {
@@ -78,7 +83,7 @@ describe('Complete Learn UseCase', () => {
     const { sut, updateTestResultRepositoryStub } = makeSut()
     const findSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
     await sut.complete(makeFakeCompleteLearnParams())
-    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_challenge_id', 'status', 'learned')
+    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_challenge_id', { score: 10, status: 'learned' })
   })
 
   test('Should throws if UpdateTestResultRepositoryStub throws', async () => {
