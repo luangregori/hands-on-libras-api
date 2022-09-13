@@ -1,3 +1,3 @@
-export interface LoadAccountScore {
+export interface LoadUserScore {
   load: (accountId: string) => Promise<number>
 }

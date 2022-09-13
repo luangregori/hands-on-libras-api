@@ -1,15 +1,15 @@
 import { Controller, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError } from '@/presentation/helpers/http-helper'
-import { LoadAccountScore } from '@/domain/usecases'
+import { LoadUserScore } from '@/domain/usecases'
 
 export class ScoreController implements Controller {
   constructor (
-    private readonly loadAccountScore: LoadAccountScore
+    private readonly loadUserScore: LoadUserScore
   ) { }
 
   async handle (request: ScoreController.Request): Promise<HttpResponse> {
     try {
-      const infos = await this.loadAccountScore.load(request.accountId)
+      const infos = await this.loadUserScore.load(request.accountId)
 
       return ok(infos)
     } catch (error) {

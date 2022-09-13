@@ -1,29 +1,29 @@
 import { ScoreController } from '@/presentation/controllers'
-import { LoadAccountScore } from '@/domain/usecases'
+import { LoadUserScore } from '@/domain/usecases'
 import { ok, serverError } from '@/presentation/helpers/http-helper'
 import { ServerError } from '@/presentation/errors'
 
 interface SutTypes {
   sut: ScoreController
-  loadAccountScoreStub: LoadAccountScore
+  loadUserScoreStub: LoadUserScore
 }
 
 const makeSut = (): SutTypes => {
-  const loadAccountScoreStub = makeLoadAccountScoreStub()
-  const sut = new ScoreController(loadAccountScoreStub)
+  const loadUserScoreStub = makeLoadUserScoreStub()
+  const sut = new ScoreController(loadUserScoreStub)
   return {
     sut,
-    loadAccountScoreStub
+    loadUserScoreStub
   }
 }
 
-const makeLoadAccountScoreStub = (): LoadAccountScore => {
-  class LoadAccountScoreStub implements LoadAccountScore {
+const makeLoadUserScoreStub = (): LoadUserScore => {
+  class LoadUserScoreStub implements LoadUserScore {
     async load (): Promise<number> {
       return await Promise.resolve(1000)
     }
   }
-  return new LoadAccountScoreStub()
+  return new LoadUserScoreStub()
 }
 
 const makeFakeRequest = (): any => ({
@@ -31,16 +31,16 @@ const makeFakeRequest = (): any => ({
 })
 
 describe('Score Controller', () => {
-  test('Should call LoadAccountScore', async () => {
-    const { sut, loadAccountScoreStub } = makeSut()
-    const loadSpy = jest.spyOn(loadAccountScoreStub, 'load')
+  test('Should call LoadUserScore', async () => {
+    const { sut, loadUserScoreStub } = makeSut()
+    const loadSpy = jest.spyOn(loadUserScoreStub, 'load')
     await sut.handle(makeFakeRequest())
     expect(loadSpy).toHaveBeenCalledWith('any_account_id')
   })
 
-  test('Should return 500 if LoadAccountScore throws', async () => {
-    const { sut, loadAccountScoreStub } = makeSut()
-    jest.spyOn(loadAccountScoreStub, 'load').mockImplementationOnce(() => {
+  test('Should return 500 if LoadUserScore throws', async () => {
+    const { sut, loadUserScoreStub } = makeSut()
+    jest.spyOn(loadUserScoreStub, 'load').mockImplementationOnce(() => {
       throw new Error()
     })
     const httpResponse = await sut.handle(makeFakeRequest())

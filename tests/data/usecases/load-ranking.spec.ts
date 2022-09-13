@@ -12,6 +12,10 @@ const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
     async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
       throw new Error('Method not implemented.')
     }
+
+    async findByAccountId (accountId: string): Promise<TestResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
   }
   return new LoadTestResultsRepositoryStub()
 }

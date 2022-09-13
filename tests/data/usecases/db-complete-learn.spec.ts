@@ -29,6 +29,10 @@ const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
     async findByDate (date: Date): Promise<TestResultModel[]> {
       throw new Error('Method not implemented.')
     }
+
+    async findByAccountId (accountId: string): Promise<TestResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
   }
   return new LoadTestResultsRepositoryStub()
 }
