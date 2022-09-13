@@ -4,7 +4,7 @@
   "description": "NodeJs Rest API using TDD, Clean Architecture, Typescript and Design Patterns",
   "scripts": {
     "start": "node dist/main/server.js",
-    "dev": "ts-node src/main/server.ts",
+    "dev": "npm run build && npm run start",
     "debug": "nodemon --inspect",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "build:watch": "rimraf dist && tsc -p tsconfig-build.json -w",
