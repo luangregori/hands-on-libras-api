@@ -30,6 +30,12 @@ export class TestResultMongoRepository implements LoadTestResultsRepository, Upd
     return result.map(MongoHelper.map)
   }
 
+  async findByAccountId (accountId: string): Promise<TestResultModel[]> {
+    const testResultsCollection = await MongoHelper.getCollection('test-results')
+    const result = await testResultsCollection.find({ accountId }).toArray()
+    return result.map(MongoHelper.map)
+  }
+
   async update (accountId: string, challengeId: string, updateTestResult: any): Promise<TestResultModel> {
     const testResultsCollection = await MongoHelper.getCollection('test-results')
     const set = { updatedAt: new Date() }

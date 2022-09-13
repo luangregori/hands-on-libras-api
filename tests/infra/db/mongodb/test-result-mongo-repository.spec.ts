@@ -85,6 +85,25 @@ describe('Test Result Mongo Repository', () => {
       expect(result).toBeDefined()
       expect(result.length).toBe(0)
     })
+
+    test('Should return all test result from accountId', async () => {
+      const now = new Date()
+      await testResultCollection.insertOne({
+        id: 'valid_id',
+        accountId: 'valid_account_id',
+        challengeId: 'valid_challenge_id',
+        status: 'completed',
+        score: 900,
+        updatedAt: now
+      })
+      const sut = makeSut()
+      const result = await sut.findByAccountId('valid_account_id')
+      expect(result).toBeDefined()
+      expect(result[0].accountId).toBe('valid_account_id')
+      expect(result[0].challengeId).toBe('valid_challenge_id')
+      expect(result[0].status).toBe('completed')
+      expect(result[0].score).toBe(900)
+    })
   })
 
   describe('UpdateTestResultRepository implementation', () => {
