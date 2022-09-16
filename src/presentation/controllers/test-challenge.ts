@@ -17,7 +17,9 @@ export class TestChallengeController implements Controller {
         }
       }
 
-      const infos = await this.testChallenge.test(request.challengeId)
+      const testChallengeParams: TestChallenge.Params = request
+
+      const infos = await this.testChallenge.test(testChallengeParams)
 
       return ok(infos)
     } catch (error) {

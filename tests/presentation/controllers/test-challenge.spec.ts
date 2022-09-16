@@ -19,7 +19,7 @@ const makeSut = (): SutTypes => {
 
 const makeLearnChallengeStub = (): TestChallenge => {
   class TestChallengeStub implements TestChallenge {
-    async test (challengeId: string): Promise<TestChallenge.Result> {
+    async test (params: TestChallenge.Params): Promise<TestChallenge.Result> {
       return await new Promise(resolve => resolve(makeFakeTestChallengeResult()))
     }
   }
@@ -53,7 +53,7 @@ describe('Test Challenge Controller', () => {
     const { sut, testChallengeStub } = makeSut()
     const testSpy = jest.spyOn(testChallengeStub, 'test')
     await sut.handle(makeFakeRequest())
-    expect(testSpy).toHaveBeenCalledWith('valid_id')
+    expect(testSpy).toHaveBeenCalledWith({ accountId: 'valid_account_id', challengeId: 'valid_id' })
   })
 
   test('Should return 500 if TestChallenge UseCase throws', async () => {
