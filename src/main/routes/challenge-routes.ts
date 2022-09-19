@@ -5,7 +5,8 @@ import {
   makeLoadChallengesController,
   makeStartChallengeController,
   makeLearnChallengeController,
-  makeCompleteLearnController
+  makeCompleteLearnController,
+  makeTestChallengeController
 } from '@/main/factories/challenge'
 
 export default (router: Router): void => {
@@ -13,4 +14,5 @@ export default (router: Router): void => {
   router.post('/challenge/start', auth, adaptRoute(makeStartChallengeController()))
   router.post('/challenge/learn', auth, adaptRoute(makeLearnChallengeController()))
   router.post('/challenge/learn/complete', auth, adaptRoute(makeCompleteLearnController()))
+  router.post('/challenge/test', auth, adaptRoute(makeTestChallengeController()))
 }
