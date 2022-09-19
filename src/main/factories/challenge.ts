@@ -1,8 +1,26 @@
 import { Controller } from '@/presentation/protocols'
 import { LogControllerDecorator } from '@/main/decorators'
-import { LogMongoRepositoiry, ChallengeMongoRepository, TestResultMongoRepository, LearningInfoMongoRepository } from '@/infra/db'
-import { CompleteLearnController, LearnChallengeController, LoadChallengesController, StartChallengeController } from '@/presentation/controllers'
-import { DbLoadChallenges, DbStartChallenge, DbLearnChallenge, DbCompleteLearn } from '@/data/usecases'
+import {
+  LogMongoRepositoiry,
+  ChallengeMongoRepository,
+  TestResultMongoRepository,
+  LearningInfoMongoRepository,
+  TestQuestionMongoRepository
+} from '@/infra/db'
+import {
+  CompleteLearnController,
+  LearnChallengeController,
+  LoadChallengesController,
+  StartChallengeController,
+  TestChallengeController
+} from '@/presentation/controllers'
+import {
+  DbLoadChallenges,
+  DbStartChallenge,
+  DbLearnChallenge,
+  DbCompleteLearn,
+  DbTestChallenge
+} from '@/data/usecases'
 
 export const makeLoadChallengesController = (): Controller => {
   const challengeMongoRepository = new ChallengeMongoRepository()
@@ -35,4 +53,13 @@ export const makeCompleteLearnController = (): Controller => {
   const completeLearnController = new CompleteLearnController(dbCompleteLearn)
   const logMongoRepositoiry = new LogMongoRepositoiry()
   return new LogControllerDecorator(completeLearnController, logMongoRepositoiry)
+}
+
+export const makeTestChallengeController = (): Controller => {
+  const testResultMongoRepository = new TestResultMongoRepository()
+  const testQuestionMongoRepository = new TestQuestionMongoRepository()
+  const dbTestChallenge = new DbTestChallenge(testResultMongoRepository, testQuestionMongoRepository)
+  const testChallengeController = new TestChallengeController(dbTestChallenge)
+  const logMongoRepositoiry = new LogMongoRepositoiry()
+  return new LogControllerDecorator(testChallengeController, logMongoRepositoiry)
 }
