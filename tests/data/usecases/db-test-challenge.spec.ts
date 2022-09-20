@@ -1,23 +1,43 @@
 import { DbTestChallenge } from '@/data/usecases'
-import { UpdateTestResultRepository, LoadTestQuestionRepository } from '@/data/protocols'
+import { UpdateTestResultRepository, LoadTestQuestionRepository, LoadTestResultsRepository } from '@/data/protocols'
 import { StatusTestResult, TestQuestionModel, TestResultModel } from '@/domain/models'
 import { TestChallenge } from '@/domain/usecases'
 
 interface SutTypes {
   sut: DbTestChallenge
+  loadTestResultsRepositoryStub: LoadTestResultsRepository
   updateTestResultRepositoryStub: UpdateTestResultRepository
   loadTestQuestionRepositoryStub: LoadTestQuestionRepository
 }
 
 const makeSut = (): SutTypes => {
+  const loadTestResultsRepositoryStub = makeLoadTestResultsRepositoryStub()
   const updateTestResultRepositoryStub = makeUpdateTestResultRepositoryStub()
   const loadTestQuestionRepositoryStub = makeLoadTestQuestionRepositoryStub()
-  const sut = new DbTestChallenge(updateTestResultRepositoryStub, loadTestQuestionRepositoryStub)
+  const sut = new DbTestChallenge(loadTestResultsRepositoryStub, updateTestResultRepositoryStub, loadTestQuestionRepositoryStub)
   return {
     sut,
+    loadTestResultsRepositoryStub,
     updateTestResultRepositoryStub,
     loadTestQuestionRepositoryStub
   }
+}
+
+const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
+  class LoadTestResultsRepositoryStub implements LoadTestResultsRepository {
+    async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
+      return await Promise.resolve(makeFakeTestResultModel())
+    }
+
+    async findByDate (date: Date): Promise<TestResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
+
+    async findByAccountId (accountId: string): Promise<TestResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
+  }
+  return new LoadTestResultsRepositoryStub()
 }
 
 const makeUpdateTestResultRepositoryStub = (): UpdateTestResultRepository => {
@@ -44,7 +64,7 @@ const makeFakeTestResultModel = (): TestResultModel => ({
   challengeId: 'any_challenge_id',
   status: StatusTestResult.LEARNED,
   score: 100,
-  updatedAt: new Date()
+  updatedAt: fakeDate
 })
 
 const makeFakeTestQuestionModel = (): TestQuestionModel[] => ([
@@ -61,12 +81,54 @@ const makeFakeTestChallengeParams = (): TestChallenge.Params => ({
   challengeId: 'any_challenge_id'
 })
 
+const fakeDate = new Date(2022, 6, 9)
+
 describe('Test Challenge UseCase', () => {
+  beforeAll(() => {
+    jest.useFakeTimers('modern').setSystemTime(fakeDate)
+  })
+
+  test('Should call LoadTestResultsRepository with correct values', async () => {
+    const { sut, loadTestResultsRepositoryStub } = makeSut()
+    const updateSpy = jest.spyOn(loadTestResultsRepositoryStub, 'findOrCreate')
+    await sut.test(makeFakeTestChallengeParams())
+    expect(updateSpy).toHaveBeenCalledWith('any_account_id', 'any_challenge_id')
+  })
+
   test('Should call UpdateTestResultRepository with correct values', async () => {
     const { sut, updateTestResultRepositoryStub } = makeSut()
     const updateSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
     await sut.test(makeFakeTestChallengeParams())
-    expect(updateSpy).toHaveBeenCalledWith('any_account_id', 'any_challenge_id', { status: 'tested' })
+    expect(updateSpy).toHaveBeenCalledWith('any_account_id', 'any_challenge_id', {
+      accountId: 'any_account_id',
+      challengeId: 'any_challenge_id',
+      id: 'any_id',
+      score: 100,
+      status: 'tested',
+      updatedAt: fakeDate
+    })
+  })
+
+  test('Should not update the status if already completed', async () => {
+    const { sut, loadTestResultsRepositoryStub, updateTestResultRepositoryStub } = makeSut()
+    jest.spyOn(loadTestResultsRepositoryStub, 'findOrCreate').mockReturnValueOnce(Promise.resolve({
+      id: 'any_id',
+      accountId: 'any_account_id',
+      challengeId: 'any_challenge_id',
+      status: StatusTestResult.COMPLETED,
+      score: 100,
+      updatedAt: fakeDate
+    }))
+    const updateSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
+    await sut.test(makeFakeTestChallengeParams())
+    expect(updateSpy).toHaveBeenCalledWith('any_account_id', 'any_challenge_id', {
+      accountId: 'any_account_id',
+      challengeId: 'any_challenge_id',
+      id: 'any_id',
+      score: 100,
+      status: 'completed',
+      updatedAt: fakeDate
+    })
   })
 
   test('Should throws if UpdateTestResultRepository throws', async () => {

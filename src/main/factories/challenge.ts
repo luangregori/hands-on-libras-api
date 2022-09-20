@@ -60,7 +60,7 @@ export const makeCompleteLearnController = (): Controller => {
 export const makeTestChallengeController = (): Controller => {
   const testResultMongoRepository = new TestResultMongoRepository()
   const testQuestionMongoRepository = new TestQuestionMongoRepository()
-  const dbTestChallenge = new DbTestChallenge(testResultMongoRepository, testQuestionMongoRepository)
+  const dbTestChallenge = new DbTestChallenge(testResultMongoRepository, testResultMongoRepository, testQuestionMongoRepository)
   const testChallengeController = new TestChallengeController(dbTestChallenge)
   const logMongoRepositoiry = new LogMongoRepositoiry()
   return new LogControllerDecorator(testChallengeController, logMongoRepositoiry)
