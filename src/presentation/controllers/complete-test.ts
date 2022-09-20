@@ -17,7 +17,8 @@ export class CompleteTestController implements Controller {
         }
       }
 
-      const completeTestParams: CompleteTest.Params = request
+      const { challengeId, accountId, lives } = request
+      const completeTestParams: CompleteTest.Params = { challengeId, accountId, lives: Number(lives) }
 
       await this.completeTest.complete(completeTestParams)
 
@@ -31,6 +32,6 @@ export class CompleteTestController implements Controller {
 export namespace CompleteTestController {
   export interface Request extends Controller.Request {
     challengeId: string
-    lives: number
+    lives: string
   }
 }
