@@ -12,14 +12,16 @@ import {
   LearnChallengeController,
   LoadChallengesController,
   StartChallengeController,
-  TestChallengeController
+  TestChallengeController,
+  CompleteTestController
 } from '@/presentation/controllers'
 import {
   DbLoadChallenges,
   DbStartChallenge,
   DbLearnChallenge,
   DbCompleteLearn,
-  DbTestChallenge
+  DbTestChallenge,
+  DbCompleteTest
 } from '@/data/usecases'
 
 export const makeLoadChallengesController = (): Controller => {
@@ -62,4 +64,12 @@ export const makeTestChallengeController = (): Controller => {
   const testChallengeController = new TestChallengeController(dbTestChallenge)
   const logMongoRepositoiry = new LogMongoRepositoiry()
   return new LogControllerDecorator(testChallengeController, logMongoRepositoiry)
+}
+
+export const makeCompleteTestController = (): Controller => {
+  const testResultMongoRepository = new TestResultMongoRepository()
+  const dbCompleteTest = new DbCompleteTest(testResultMongoRepository, testResultMongoRepository)
+  const completeLearnController = new CompleteTestController(dbCompleteTest)
+  const logMongoRepositoiry = new LogMongoRepositoiry()
+  return new LogControllerDecorator(completeLearnController, logMongoRepositoiry)
 }
