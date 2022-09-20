@@ -29,7 +29,7 @@ const makeCompleteTestStub = (): CompleteTest => {
 const makeFakeRequest = (): CompleteTestController.Request => ({
   challengeId: 'valid_id',
   accountId: 'valid_account_id',
-  lives: 3
+  lives: '3'
 })
 
 describe('Complete Test Controller', () => {
@@ -38,7 +38,7 @@ describe('Complete Test Controller', () => {
     const request = {
       challengeId: null,
       accountId: 'valid_account_id',
-      lives: 3
+      lives: '3'
     }
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('challengeId')))
@@ -53,6 +53,18 @@ describe('Complete Test Controller', () => {
     }
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('lives')))
+  })
+
+  test('Should pass validation if lives = 0', async () => {
+    const { sut, completeTestStub } = makeSut()
+    const request = {
+      challengeId: 'valid_id',
+      accountId: 'valid_account_id',
+      lives: '0'
+    }
+    const completeSpy = jest.spyOn(completeTestStub, 'complete')
+    await sut.handle(request)
+    expect(completeSpy).toHaveBeenCalled()
   })
 
   test('Should call CompleteTest UseCase with correct values', async () => {
