@@ -4,7 +4,7 @@ export interface CompleteLearn {
 
 export namespace CompleteLearn {
   export interface Params {
-    challengeId: string
+    lessonId: string
     accountId: string
   }
 }

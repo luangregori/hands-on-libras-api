@@ -1,14 +1,14 @@
 import { Controller, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError, badRequest } from '@/presentation/helpers/http-helper'
 import { MissingParamError } from '@/presentation/errors'
-import { CompleteLearn } from '@/domain/usecases'
+import { ChallengeLesson } from '@/domain/usecases'
 
-export class CompleteLearnController implements Controller {
+export class ChallengeLessonController implements Controller {
   constructor (
-    private readonly completeLearn: CompleteLearn
+    private readonly challengeLesson: ChallengeLesson
   ) { }
 
-  async handle (request: CompleteLearnController.Request): Promise<HttpResponse> {
+  async handle (request: ChallengeLessonController.Request): Promise<HttpResponse> {
     try {
       const requiredFields = ['lessonId']
       for (const field of requiredFields) {
@@ -17,18 +17,18 @@ export class CompleteLearnController implements Controller {
         }
       }
 
-      const completeLearnParams: CompleteLearn.Params = request
+      const challengeLessonParams: ChallengeLesson.Params = request
 
-      await this.completeLearn.complete(completeLearnParams)
+      const infos = await this.challengeLesson.test(challengeLessonParams)
 
-      return ok()
+      return ok(infos)
     } catch (error) {
       return serverError(error)
     }
   }
 }
 
-export namespace CompleteLearnController {
+export namespace ChallengeLessonController {
   export interface Request extends Controller.Request {
     lessonId: string
   }
