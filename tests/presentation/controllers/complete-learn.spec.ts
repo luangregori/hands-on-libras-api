@@ -1,69 +1,61 @@
+import faker from 'faker'
 import { CompleteLearnController } from '@/presentation/controllers'
 import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
 import { MissingParamError, ServerError } from '@/presentation/errors'
-import { CompleteLearn } from '@/domain/usecases'
+import { CompleteLearnSpy } from '@/tests/presentation/mocks'
+import { throwError } from '@/tests/domain/mocks'
 
 interface SutTypes {
   sut: CompleteLearnController
-  completeLearnStub: CompleteLearn
+  completeLearnSpy: CompleteLearnSpy
 }
 
 const makeSut = (): SutTypes => {
-  const completeLearnStub = makeCompleteLearnStub()
-  const sut = new CompleteLearnController(completeLearnStub)
+  const completeLearnSpy = new CompleteLearnSpy()
+  const sut = new CompleteLearnController(completeLearnSpy)
   return {
     sut,
-    completeLearnStub
+    completeLearnSpy
   }
 }
 
-const makeCompleteLearnStub = (): CompleteLearn => {
-  class CompleteLearnStub implements CompleteLearn {
-    async complete (completeLearnParams: CompleteLearn.Params): Promise<boolean> {
-      return await new Promise(resolve => resolve(true))
-    }
-  }
-  return new CompleteLearnStub()
-}
-
-const makeFakeRequest = (): CompleteLearnController.Request => ({
-  challengeId: 'valid_id',
-  accountId: 'valid_account_id'
+const mockRequest = (): CompleteLearnController.Request => ({
+  lessonId: faker.datatype.uuid(),
+  accountId: faker.datatype.uuid()
 })
 
 describe('Complete Learn Controller', () => {
   test('Should return 400 if no challengeId is provided', async () => {
     const { sut } = makeSut()
     const request = {
-      challengeId: null,
-      accountId: 'valid_account_id'
+      lessonId: null,
+      accountId: faker.datatype.uuid()
     }
     const httpResponse = await sut.handle(request)
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('challengeId')))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('lessonId')))
   })
 
   test('Should call CompleteLearn UseCase with correct values', async () => {
-    const { sut, completeLearnStub } = makeSut()
-    const completeSpy = jest.spyOn(completeLearnStub, 'complete')
-    await sut.handle(makeFakeRequest())
+    const { sut, completeLearnSpy } = makeSut()
+    const completeSpy = jest.spyOn(completeLearnSpy, 'complete')
+    const request = mockRequest()
+    await sut.handle(request)
     expect(completeSpy).toHaveBeenCalledWith({
-      challengeId: 'valid_id',
-      accountId: 'valid_account_id'
+      lessonId: request.lessonId,
+      accountId: request.accountId
     })
   })
 
   test('Should return 500 if CompleteLearn UseCase throws', async () => {
-    const { sut, completeLearnStub } = makeSut()
-    jest.spyOn(completeLearnStub, 'complete').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const { sut, completeLearnSpy } = makeSut()
+    jest.spyOn(completeLearnSpy, 'complete').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
   test('Should return 200 if valid data is provided', async () => {
     const { sut } = makeSut()
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(ok())
   })
 })

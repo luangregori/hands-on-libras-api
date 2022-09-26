@@ -13,7 +13,7 @@ const makeFakeFindAllCategoriesRepository = (): FindAllCategoriesRepository => {
 
 const makeFakeCategory = (): CategoryModel => ({
   id: 'any_id',
-  name: 'any_name'
+  name: faker.name.findName()
 })
 
 interface SutTypes{

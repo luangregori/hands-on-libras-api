@@ -1,39 +1,26 @@
+import faker from 'faker'
 import { LoginController } from '@/presentation/controllers'
-import { Authentication } from '@/domain/usecases'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { ok, serverError, badRequest, unauthorized } from '@/presentation/helpers/http-helper'
+import { AuthenticationSpy } from '@/tests/presentation/mocks'
+import { throwError } from '@/tests/domain/mocks'
 
-const makeAuthentication = (): Authentication => {
-  class AuthenticationStub implements Authentication {
-    async auth (authentication: Authentication.Params): Promise<Authentication.Result> {
-      return await Promise.resolve(makeFakeAuthenticationResult())
-    }
-  }
-  return new AuthenticationStub()
-}
-
-const makeFakeAuthenticationResult = (): Authentication.Result => ({
-  accessToken: 'any_token',
-  expiresIn: 3600,
-  name: 'any_name'
-})
-
-const makeFakeRequest = (): LoginController.Request => ({
-  email: 'any_email@mail.com',
-  password: 'any_password'
+const mockRequest = (): LoginController.Request => ({
+  email: faker.internet.email(),
+  password: faker.internet.password()
 })
 
 interface SutTypes {
   sut: LoginController
-  authenticationStub: Authentication
+  authenticationSpy: AuthenticationSpy
 }
 
 const makeSut = (): SutTypes => {
-  const authenticationStub = makeAuthentication()
-  const sut = new LoginController(authenticationStub)
+  const authenticationSpy = new AuthenticationSpy()
+  const sut = new LoginController(authenticationSpy)
   return {
     sut,
-    authenticationStub
+    authenticationSpy
   }
 }
 
@@ -42,7 +29,7 @@ describe('Login Controller', () => {
     const { sut } = makeSut()
     const request = {
       email: null,
-      password: 'any_password'
+      password: faker.internet.password()
     }
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('email')))
@@ -51,7 +38,7 @@ describe('Login Controller', () => {
   test('Should return 400 if no password is provided', async () => {
     const { sut } = makeSut()
     const request = {
-      email: 'any_email@mail.com',
+      email: faker.internet.email(),
       password: null
     }
     const httpResponse = await sut.handle(request)
@@ -59,34 +46,32 @@ describe('Login Controller', () => {
   })
 
   test('Should return 401 if authentication fails', async () => {
-    const { sut, authenticationStub } = makeSut()
-    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(null)
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const { sut, authenticationSpy } = makeSut()
+    jest.spyOn(authenticationSpy, 'auth').mockReturnValueOnce(null)
+    const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(unauthorized())
   })
 
   test('Should return 500 if Authentication throws', async () => {
-    const { sut, authenticationStub } = makeSut()
-    jest.spyOn(authenticationStub, 'auth').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const { sut, authenticationSpy } = makeSut()
+    jest.spyOn(authenticationSpy, 'auth').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
   test('Should call Authentication with correct values', async () => {
-    const { sut, authenticationStub } = makeSut()
-    const authSpy = jest.spyOn(authenticationStub, 'auth')
-    await sut.handle(makeFakeRequest())
-    expect(authSpy).toHaveBeenCalledWith({
-      email: 'any_email@mail.com',
-      password: 'any_password'
+    const { sut, authenticationSpy } = makeSut()
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(authenticationSpy.params).toEqual({
+      email: request.email,
+      password: request.password
     })
   })
 
   test('Should return 200 if valid data is provided', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(ok(makeFakeAuthenticationResult()))
+    const { sut, authenticationSpy } = makeSut()
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(ok(authenticationSpy.result))
   })
 })

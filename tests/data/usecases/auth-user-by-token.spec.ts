@@ -28,7 +28,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('AuthUser Usecase', () => {
+describe('AuthUser UseCase', () => {
   test('Should call Encrypter with correct value', async () => {
     const { sut, encrypterStub } = makeSut()
     const verifySpy = jest.spyOn(encrypterStub, 'verify')

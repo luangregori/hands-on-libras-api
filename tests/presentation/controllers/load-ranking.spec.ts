@@ -1,40 +1,27 @@
+import faker from 'faker'
 import { LoadRankingController } from '@/presentation/controllers'
-import { LoadRanking } from '@/domain/usecases'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
+import { LoadRankingSpy } from '@/tests/presentation/mocks'
+import { throwError } from '@/tests/domain/mocks'
 
 interface SutTypes {
   sut: LoadRankingController
-  loadRankingStub: LoadRanking
+  loadRankingSpy: LoadRankingSpy
 }
 
 const makeSut = (): SutTypes => {
-  const loadRankingStub = makeLoadRankingStub()
-  const sut = new LoadRankingController(loadRankingStub)
+  const loadRankingSpy = new LoadRankingSpy()
+  const sut = new LoadRankingController(loadRankingSpy)
   return {
     sut,
-    loadRankingStub
+    loadRankingSpy
   }
 }
 
-const makeLoadRankingStub = (): LoadRanking => {
-  class LoadRankingStub implements LoadRanking {
-    async load (params: LoadRanking.Params): Promise<any[]> {
-      return await new Promise(resolve => resolve([makeFakeRanking()]))
-    }
-  }
-  return new LoadRankingStub()
-}
-
-const makeFakeRanking = (): any => ({
-  position: 0,
-  name: 'any_name',
-  score: 100
-})
-
-const makeFakeRequest = (): LoadRankingController.Request => ({
-  accountId: 'valid_account_id',
-  days: 7
+const mockRequest = (): LoadRankingController.Request => ({
+  accountId: faker.datatype.uuid(),
+  days: faker.datatype.number()
 })
 
 describe('LoadRanking Controller', () => {
@@ -42,34 +29,33 @@ describe('LoadRanking Controller', () => {
     const { sut } = makeSut()
     const request = {
       days: null,
-      accountId: 'valid_account_id'
+      accountId: faker.datatype.uuid()
     }
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('days')))
   })
 
-  test('Should call LoadC=Ranking UseCase with correct values', async () => {
-    const { sut, loadRankingStub } = makeSut()
-    const loadSpy = jest.spyOn(loadRankingStub, 'load')
-    await sut.handle(makeFakeRequest())
+  test('Should call LoadRanking UseCase with correct values', async () => {
+    const { sut, loadRankingSpy } = makeSut()
+    const loadSpy = jest.spyOn(loadRankingSpy, 'load')
+    const request = mockRequest()
+    await sut.handle(request)
     expect(loadSpy).toHaveBeenCalledWith({
-      accountId: 'valid_account_id',
-      days: 7
+      accountId: request.accountId,
+      days: request.days
     })
   })
 
   test('Should return 500 if LoadRanking UseCase throws', async () => {
-    const { sut, loadRankingStub } = makeSut()
-    jest.spyOn(loadRankingStub, 'load').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const { sut, loadRankingSpy } = makeSut()
+    jest.spyOn(loadRankingSpy, 'load').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new ServerError(null)))
   })
 
   test('Should return 200 if valid data is provided', async () => {
-    const { sut } = makeSut()
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(ok([makeFakeRanking()]))
+    const { sut, loadRankingSpy } = makeSut()
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(ok(loadRankingSpy.result))
   })
 })

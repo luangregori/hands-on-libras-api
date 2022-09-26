@@ -30,14 +30,14 @@ describe('Category Routes', () => {
     const accessToken = await mockAccessToken()
     await categoryCollection.insertOne({
       id: 'any_id',
-      name: 'any_name'
+      name: faker.name.findName()
     })
     await request(app)
       .get('/api/categories')
       .set('x-access-token', accessToken)
       .send({
         id: 'any_id',
-        name: 'any_name'
+        name: faker.name.findName()
       })
       .expect(200)
   })
@@ -45,13 +45,13 @@ describe('Category Routes', () => {
   test('Should return 403 if authentication fails', async () => {
     await categoryCollection.insertOne({
       id: 'any_id',
-      name: 'any_name'
+      name: faker.name.findName()
     })
     await request(app)
       .get('/api/categories')
       .send({
         id: 'any_id',
-        name: 'any_name'
+        name: faker.name.findName()
       })
       .expect(403)
   })

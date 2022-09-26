@@ -44,7 +44,7 @@ const makeFakeTestResultModel = (accountId: string = 'any_account_id'): TestResu
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_account_id',
-  name: 'any_name',
+  name: faker.name.findName(),
   email: 'any_email',
   password: 'any_password'
 })

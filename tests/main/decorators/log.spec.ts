@@ -30,8 +30,8 @@ const makeFakeAccount = (): AccountModel => ({
 })
 
 const makeFakeRequest = (): any => ({
-  name: 'any_name',
-  email: 'any_email@mail.com',
+  name: faker.name.findName(),
+  email: faker.internet.email(),
   password: 'any_password',
   passwordConfirmation: 'any_password'
 })
