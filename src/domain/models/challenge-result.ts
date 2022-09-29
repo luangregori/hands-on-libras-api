@@ -1,7 +1,7 @@
 export interface ChallengeResultModel {
   id: string
   accountId: string
-  challengeId: string
+  lessonId: string
   status: StatusChallengeResult
   score: number
   updatedAt: Date

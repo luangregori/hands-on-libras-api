@@ -16,9 +16,9 @@ export class LessonMongoRepository implements FindAllLessonsRepository, FindLess
     return result.length ? result.map(category => MongoHelper.map(category)) : result
   }
 
-  async findById (challengeId: string): Promise<LessonModel> {
+  async findById (lessonId: string): Promise<LessonModel> {
     const challengeCollection = await MongoHelper.getCollection('lessons')
-    const result = await challengeCollection.findOne({ _id: new ObjectId(challengeId) })
+    const result = await challengeCollection.findOne({ _id: new ObjectId(lessonId) })
     if (result) return MongoHelper.map(result)
   }
 }

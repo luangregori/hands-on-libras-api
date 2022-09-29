@@ -1,5 +1,6 @@
 import { AuthUser } from '@/data/usecases'
 import { EncrypterSpy } from '@/tests/data/mocks'
+import { throwError } from '@/tests/domain/mocks'
 interface SutTypes {
   sut: AuthUser
   encrypterSpy: EncrypterSpy
@@ -24,7 +25,7 @@ describe('AuthUser UseCase', () => {
 
   test('Should return null if Encrypter throws', async () => {
     const { sut, encrypterSpy } = makeSut()
-    jest.spyOn(encrypterSpy, 'verify').mockReturnValueOnce(Promise.reject(new Error()))
+    jest.spyOn(encrypterSpy, 'verify').mockImplementationOnce(throwError)
     const account = await sut.auth('any_token')
     expect(account).toBeNull()
   })

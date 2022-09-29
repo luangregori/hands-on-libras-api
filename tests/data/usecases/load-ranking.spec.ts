@@ -1,23 +1,23 @@
 import { DbLoadRanking } from '@/data/usecases'
-import { LoadTestResultsRepository, FindAccountRepository } from '@/data/protocols'
-import { AccountModel, StatusTestResult, TestResultModel } from '@/domain/models'
+import { LoadChallengeResultsRepository, FindAccountRepository } from '@/data/protocols'
+import { AccountModel, StatusChallengeResult, ChallengeResultModel } from '@/domain/models'
 import { LoadRanking } from '@/domain/usecases'
 
-const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
-  class LoadTestResultsRepositoryStub implements LoadTestResultsRepository {
-    async findByDate (date: Date): Promise<TestResultModel[]> {
-      return await new Promise(resolve => resolve([makeFakeTestResultModel(), makeFakeTestResultModel('another_id')]))
+const makeLoadChallengeResultsRepositoryStub = (): LoadChallengeResultsRepository => {
+  class LoadChallengeResultsRepositoryStub implements LoadChallengeResultsRepository {
+    async findByDate (date: Date): Promise<ChallengeResultModel[]> {
+      return await new Promise(resolve => resolve([makeFakeChallengeResultModel(), makeFakeChallengeResultModel('another_id')]))
     }
 
-    async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
+    async findOrCreate (accountId: string, lessonId: string): Promise<ChallengeResultModel> {
       throw new Error('Method not implemented.')
     }
 
-    async findByAccountId (accountId: string): Promise<TestResultModel[]> {
+    async findByAccountId (accountId: string): Promise<ChallengeResultModel[]> {
       throw new Error('Method not implemented.')
     }
   }
-  return new LoadTestResultsRepositoryStub()
+  return new LoadChallengeResultsRepositoryStub()
 }
 
 const makeFindAccountRepositoryStub = (): FindAccountRepository => {
@@ -33,35 +33,35 @@ const makeFindAccountRepositoryStub = (): FindAccountRepository => {
   return new FindAccountRepositoryStub()
 }
 
-const makeFakeTestResultModel = (accountId: string = 'any_account_id'): TestResultModel => ({
+const makeFakeChallengeResultModel = (accountId: string = 'any_account_id'): ChallengeResultModel => ({
   id: 'any_id',
   accountId,
-  challengeId: 'any_challenge_id',
-  status: StatusTestResult.COMPLETED,
+  lessonId: 'any_lesson_id',
+  status: StatusChallengeResult.COMPLETED,
   score: Math.floor(Math.random() * 1000) + 1,
   updatedAt: new Date()
 })
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_account_id',
-  name: faker.name.findName(),
+  name: 'any_name',
   email: 'any_email',
   password: 'any_password'
 })
 
 interface SutTypes {
   sut: DbLoadRanking
-  loadTestResultsRepositoryStub: LoadTestResultsRepository
+  loadChallengeResultsRepositoryStub: LoadChallengeResultsRepository
   findAccountRepositoryStub: FindAccountRepository
 }
 
 const makeSut = (): SutTypes => {
   const findAccountRepositoryStub = makeFindAccountRepositoryStub()
-  const loadTestResultsRepositoryStub = makeLoadTestResultsRepositoryStub()
-  const sut = new DbLoadRanking(loadTestResultsRepositoryStub, findAccountRepositoryStub)
+  const loadChallengeResultsRepositoryStub = makeLoadChallengeResultsRepositoryStub()
+  const sut = new DbLoadRanking(loadChallengeResultsRepositoryStub, findAccountRepositoryStub)
   return {
     sut,
-    loadTestResultsRepositoryStub,
+    loadChallengeResultsRepositoryStub,
     findAccountRepositoryStub
   }
 }
@@ -75,16 +75,16 @@ describe('DbLoadRanking UseCase', () => {
     jest.useFakeTimers('modern').setSystemTime(new Date(2022, 6, 10))
   })
 
-  test('Should call LoadTestResultsRepository with correct values', async () => {
-    const { sut, loadTestResultsRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(loadTestResultsRepositoryStub, 'findByDate')
+  test('Should call LoadChallengeResultsRepository with correct values', async () => {
+    const { sut, loadChallengeResultsRepositoryStub } = makeSut()
+    const findSpy = jest.spyOn(loadChallengeResultsRepositoryStub, 'findByDate')
     await sut.load(makeFakeParams())
     expect(findSpy).toHaveBeenCalledWith(new Date(2022, 6, 9))
   })
 
-  test('Should throws if LoadTestResultsRepository throws', async () => {
-    const { sut, loadTestResultsRepositoryStub } = makeSut()
-    jest.spyOn(loadTestResultsRepositoryStub, 'findByDate').mockReturnValueOnce(Promise.reject(new Error()))
+  test('Should throws if LoadChallengeResultsRepository throws', async () => {
+    const { sut, loadChallengeResultsRepositoryStub } = makeSut()
+    jest.spyOn(loadChallengeResultsRepositoryStub, 'findByDate').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.load(makeFakeParams())
     await expect(promise).rejects.toThrow()
   })

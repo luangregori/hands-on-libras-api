@@ -1,8 +1,8 @@
 import { Collection } from 'mongodb'
-import { MongoHelper, LogMongoRepositoiry } from '@/infra/db'
+import { MongoHelper, LogMongoRepository } from '@/infra/db'
 
-const makeSut = (): LogMongoRepositoiry => {
-  return new LogMongoRepositoiry()
+const makeSut = (): LogMongoRepository => {
+  return new LogMongoRepository()
 }
 
 describe('Log Mongo Repository', () => {

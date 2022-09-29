@@ -7,7 +7,6 @@ import {
   ChallengeQuestionModel
 } from '@/domain/models'
 
-
 export const mockLessonModel = (): LessonModel => ({
   id: faker.name.findName(),
   name: faker.name.findName(),
@@ -20,22 +19,21 @@ export const mockLearningInfoModel = (): LearningInfoModel => ({
   id: faker.name.findName(),
   description: faker.random.words(),
   word: faker.random.word(),
-  challengeId: faker.datatype.uuid()
+  lessonId: faker.datatype.uuid()
 })
 
 export const mockChallengeResultModel = (): ChallengeResultModel => ({
   id: faker.datatype.uuid(),
   accountId: faker.datatype.uuid(),
-  challengeId: faker.datatype.uuid(),
+  lessonId: faker.datatype.uuid(),
   status: StatusChallengeResult.COMPLETED,
   score: faker.datatype.number(),
-  updatedAt: faker.datatype.datetime(),
+  updatedAt: faker.datatype.datetime()
 })
 
 export const mockChallengeQuestionModel = (): ChallengeQuestionModel => ({
   id: faker.name.findName(),
   word: faker.random.word(),
   options: [faker.random.word()],
-  challengeId: faker.datatype.uuid()
+  lessonId: faker.datatype.uuid()
 })
-
