@@ -10,7 +10,7 @@ export class CompleteLearnController implements Controller {
 
   async handle (request: CompleteLearnController.Request): Promise<HttpResponse> {
     try {
-      const requiredFields = ['challengeId']
+      const requiredFields = ['lessonId']
       for (const field of requiredFields) {
         if (!request[field]) {
           return badRequest(new MissingParamError(field))
@@ -30,6 +30,6 @@ export class CompleteLearnController implements Controller {
 
 export namespace CompleteLearnController {
   export interface Request extends Controller.Request {
-    challengeId: string
+    lessonId: string
   }
 }

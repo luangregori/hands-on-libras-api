@@ -1,22 +1,22 @@
 import { CompleteLearn } from '@/domain/usecases'
-import { UpdateTestResultRepository, LoadTestResultsRepository } from '@/data/protocols'
-import { StatusTestResult } from '@/domain/models'
+import { UpdateChallengeResultRepository, LoadChallengeResultsRepository } from '@/data/protocols'
+import { StatusChallengeResult } from '@/domain/models'
 
 export class DbCompleteLearn implements CompleteLearn {
   constructor (
-    private readonly loadTestResultsRepository: LoadTestResultsRepository,
-    private readonly updateTestResultsRepository: UpdateTestResultRepository
+    private readonly loadChallengeResultsRepository: LoadChallengeResultsRepository,
+    private readonly updateChallengeResultRepository: UpdateChallengeResultRepository
   ) { }
 
   async complete (completeLearnParams: CompleteLearn.Params): Promise<boolean> {
-    const { accountId, challengeId } = completeLearnParams
-    const testResult = await this.loadTestResultsRepository.findOrCreate(accountId, challengeId)
-    if (testResult.status === StatusTestResult.STARTED) {
-      const testResultToUpdate = {
-        status: StatusTestResult.LEARNED,
-        score: testResult.score + 10
+    const { accountId, lessonId } = completeLearnParams
+    const challengeResult = await this.loadChallengeResultsRepository.findOrCreate(accountId, lessonId)
+    if (challengeResult.status === StatusChallengeResult.STARTED) {
+      const challengeResultToUpdate = {
+        status: StatusChallengeResult.LEARNED,
+        score: challengeResult.score + 10
       }
-      await this.updateTestResultsRepository.update(accountId, challengeId, testResultToUpdate)
+      await this.updateChallengeResultRepository.update(accountId, lessonId, challengeResultToUpdate)
     }
     return true
   }

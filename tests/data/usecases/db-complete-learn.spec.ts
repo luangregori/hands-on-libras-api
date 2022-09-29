@@ -1,55 +1,55 @@
 import { DbCompleteLearn } from '@/data/usecases'
-import { LoadTestResultsRepository, UpdateTestResultRepository } from '@/data/protocols'
-import { StatusTestResult, TestResultModel } from '@/domain/models'
+import { LoadChallengeResultsRepository, UpdateChallengeResultRepository } from '@/data/protocols'
+import { StatusChallengeResult, ChallengeResultModel } from '@/domain/models'
 import { CompleteLearn } from '@/domain/usecases'
 
 interface SutTypes {
   sut: DbCompleteLearn
-  loadTestResultsRepositoryStub: LoadTestResultsRepository
-  updateTestResultRepositoryStub: UpdateTestResultRepository
+  loadChallengeResultsRepositoryStub: LoadChallengeResultsRepository
+  updateChallengeResultRepositoryStub: UpdateChallengeResultRepository
 }
 
 const makeSut = (): SutTypes => {
-  const updateTestResultRepositoryStub = makeUpdateTestResultRepositoryStub()
-  const loadTestResultsRepositoryStub = makeLoadTestResultsRepositoryStub()
-  const sut = new DbCompleteLearn(loadTestResultsRepositoryStub, updateTestResultRepositoryStub)
+  const updateChallengeResultRepositoryStub = makeUpdateChallengeResultRepositoryStub()
+  const loadChallengeResultsRepositoryStub = makeLoadChallengeResultsRepositoryStub()
+  const sut = new DbCompleteLearn(loadChallengeResultsRepositoryStub, updateChallengeResultRepositoryStub)
   return {
     sut,
-    loadTestResultsRepositoryStub,
-    updateTestResultRepositoryStub
+    loadChallengeResultsRepositoryStub,
+    updateChallengeResultRepositoryStub
   }
 }
 
-const makeLoadTestResultsRepositoryStub = (): LoadTestResultsRepository => {
-  class LoadTestResultsRepositoryStub implements LoadTestResultsRepository {
-    async findOrCreate (accountId: string, challengeId: string): Promise<TestResultModel> {
-      return await new Promise(resolve => resolve(makeFakeTestResultModel()))
+const makeLoadChallengeResultsRepositoryStub = (): LoadChallengeResultsRepository => {
+  class LoadChallengeResultsRepositoryStub implements LoadChallengeResultsRepository {
+    async findOrCreate (accountId: string, lessonId: string): Promise<ChallengeResultModel> {
+      return await new Promise(resolve => resolve(makeFakeChallengeResultModel()))
     }
 
-    async findByDate (date: Date): Promise<TestResultModel[]> {
+    async findByDate (date: Date): Promise<ChallengeResultModel[]> {
       throw new Error('Method not implemented.')
     }
 
-    async findByAccountId (accountId: string): Promise<TestResultModel[]> {
+    async findByAccountId (accountId: string): Promise<ChallengeResultModel[]> {
       throw new Error('Method not implemented.')
     }
   }
-  return new LoadTestResultsRepositoryStub()
+  return new LoadChallengeResultsRepositoryStub()
 }
 
-const makeUpdateTestResultRepositoryStub = (): UpdateTestResultRepository => {
-  class UpdateTestResultRepositoryStub implements UpdateTestResultRepository {
-    async update (testResultToUpdate: any): Promise<TestResultModel> {
-      return await Promise.resolve(makeFakeTestResultModel())
+const makeUpdateChallengeResultRepositoryStub = (): UpdateChallengeResultRepository => {
+  class UpdateChallengeResultRepositoryStub implements UpdateChallengeResultRepository {
+    async update (testResultToUpdate: any): Promise<ChallengeResultModel> {
+      return await Promise.resolve(makeFakeChallengeResultModel())
     }
   }
-  return new UpdateTestResultRepositoryStub()
+  return new UpdateChallengeResultRepositoryStub()
 }
 
-const makeFakeTestResultModel = (status = StatusTestResult.STARTED): TestResultModel => ({
+const makeFakeChallengeResultModel = (status = StatusChallengeResult.STARTED): ChallengeResultModel => ({
   id: 'any_id',
   accountId: 'any_account_id',
-  challengeId: 'any_challenge_id',
+  lessonId: 'any_lesson_id',
   status,
   score: 0,
   updatedAt: new Date()
@@ -57,49 +57,49 @@ const makeFakeTestResultModel = (status = StatusTestResult.STARTED): TestResultM
 
 const makeFakeCompleteLearnParams = (): CompleteLearn.Params => ({
   accountId: 'valid_account_id',
-  challengeId: 'valid_challenge_id'
+  lessonId: 'valid_lesson_id'
 })
 
 describe('Complete Learn UseCase', () => {
-  test('Should call LoadTestResultsRepositoryStub with correct values', async () => {
-    const { sut, loadTestResultsRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(loadTestResultsRepositoryStub, 'findOrCreate')
+  test('Should call LoadChallengeResultsRepositoryStub with correct values', async () => {
+    const { sut, loadChallengeResultsRepositoryStub } = makeSut()
+    const findSpy = jest.spyOn(loadChallengeResultsRepositoryStub, 'findOrCreate')
     await sut.complete(makeFakeCompleteLearnParams())
-    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_challenge_id')
+    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_lesson_id')
   })
 
-  test('Should call UpdateTestResultRepositoryStub if STATUS = STARTED', async () => {
-    const { sut, updateTestResultRepositoryStub } = makeSut()
-    const updateSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
+  test('Should call UpdateChallengeResultRepositoryStub if STATUS = STARTED', async () => {
+    const { sut, updateChallengeResultRepositoryStub } = makeSut()
+    const updateSpy = jest.spyOn(updateChallengeResultRepositoryStub, 'update')
     await sut.complete(makeFakeCompleteLearnParams())
     expect(updateSpy).toHaveBeenCalledTimes(1)
   })
 
-  test('Should not call UpdateTestResultRepositoryStub if STATUS != STARTED', async () => {
-    const { sut, loadTestResultsRepositoryStub, updateTestResultRepositoryStub } = makeSut()
-    const updateSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
-    jest.spyOn(loadTestResultsRepositoryStub, 'findOrCreate').mockReturnValueOnce(Promise.resolve(makeFakeTestResultModel(StatusTestResult.LEARNED)))
+  test('Should not call UpdateChallengeResultRepositoryStub if STATUS != STARTED', async () => {
+    const { sut, loadChallengeResultsRepositoryStub, updateChallengeResultRepositoryStub } = makeSut()
+    const updateSpy = jest.spyOn(updateChallengeResultRepositoryStub, 'update')
+    jest.spyOn(loadChallengeResultsRepositoryStub, 'findOrCreate').mockReturnValueOnce(Promise.resolve(makeFakeChallengeResultModel(StatusChallengeResult.LEARNED)))
     await sut.complete(makeFakeCompleteLearnParams())
     expect(updateSpy).toHaveBeenCalledTimes(0)
   })
 
-  test('Should call UpdateTestResultRepositoryStub with correct values', async () => {
-    const { sut, updateTestResultRepositoryStub } = makeSut()
-    const findSpy = jest.spyOn(updateTestResultRepositoryStub, 'update')
+  test('Should call UpdateChallengeResultRepositoryStub with correct values', async () => {
+    const { sut, updateChallengeResultRepositoryStub } = makeSut()
+    const findSpy = jest.spyOn(updateChallengeResultRepositoryStub, 'update')
     await sut.complete(makeFakeCompleteLearnParams())
-    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_challenge_id', { score: 10, status: 'learned' })
+    expect(findSpy).toHaveBeenCalledWith('valid_account_id', 'valid_lesson_id', { score: 10, status: 'learned' })
   })
 
-  test('Should throws if UpdateTestResultRepositoryStub throws', async () => {
-    const { sut, updateTestResultRepositoryStub } = makeSut()
-    jest.spyOn(updateTestResultRepositoryStub, 'update').mockReturnValueOnce(Promise.reject(new Error()))
+  test('Should throws if UpdateChallengeResultRepositoryStub throws', async () => {
+    const { sut, updateChallengeResultRepositoryStub } = makeSut()
+    jest.spyOn(updateChallengeResultRepositoryStub, 'update').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.complete(makeFakeCompleteLearnParams())
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should throws if LoadTestResultsRepositoryStub throws', async () => {
-    const { sut, loadTestResultsRepositoryStub } = makeSut()
-    jest.spyOn(loadTestResultsRepositoryStub, 'findOrCreate').mockReturnValueOnce(Promise.reject(new Error()))
+  test('Should throws if LoadChallengeResultsRepositoryStub throws', async () => {
+    const { sut, loadChallengeResultsRepositoryStub } = makeSut()
+    jest.spyOn(loadChallengeResultsRepositoryStub, 'findOrCreate').mockReturnValueOnce(Promise.reject(new Error()))
     const promise = sut.complete(makeFakeCompleteLearnParams())
     await expect(promise).rejects.toThrow()
   })

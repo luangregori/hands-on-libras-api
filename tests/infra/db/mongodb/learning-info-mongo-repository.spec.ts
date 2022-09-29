@@ -25,22 +25,22 @@ describe('Learning Info Mongo Repository', () => {
     await learningInfoCollection.insertOne({
       id: 'valid_id',
       description: 'valid_description',
-      challengeId: 'any_challenge_id',
+      lessonId: 'any_lesson_id',
       word: 'valid_word'
     })
     const sut = makeSut()
-    const result = await sut.findByChallengeId('any_challenge_id')
+    const result = await sut.findByLessonId('any_lesson_id')
     expect(result).toBeDefined()
     expect(result.length).toBe(1)
     expect(result[0].id).toBeDefined()
     expect(result[0].description).toBe('valid_description')
     expect(result[0].word).toBe('valid_word')
-    expect(result[0].challengeId).toBe('any_challenge_id')
+    expect(result[0].lessonId).toBe('any_lesson_id')
   })
 
   test('Should return null array', async () => {
     const sut = makeSut()
-    const result = await sut.findByChallengeId('any_challenge_id')
+    const result = await sut.findByLessonId('any_lesson_id')
     expect(result.length).toBe(0)
   })
 })

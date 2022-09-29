@@ -1,33 +1,25 @@
+import faker from 'faker'
 import { AuthMiddleware } from '@/presentation/middlewares/auth-middleware'
 import { AccessDeniedError } from '@/presentation/errors'
 import { forbidden, ok, serverError } from '@/presentation/helpers/http-helper'
-import { AuthUserByToken } from '@/domain/usecases/auth-user-by-token'
+import { AuthUserByTokenSpy } from '@/tests/presentation/mocks'
 
 interface SutTypes{
   sut: AuthMiddleware
-  authUserByTokenStub: AuthUserByToken
-}
-
-const makeAuthUserByTokenStub = (): AuthUserByToken => {
-  class AuthUserByTokenStub implements AuthUserByToken {
-    async auth (accesToken: string): Promise<AuthUserByToken.Result> {
-      return await Promise.resolve({ id: 'any_id' })
-    }
-  }
-  return new AuthUserByTokenStub()
+  authUserByTokenSpy: AuthUserByTokenSpy
 }
 
 const makeSut = (): SutTypes => {
-  const authUserByTokenStub = makeAuthUserByTokenStub()
-  const sut = new AuthMiddleware(authUserByTokenStub)
+  const authUserByTokenSpy = new AuthUserByTokenSpy()
+  const sut = new AuthMiddleware(authUserByTokenSpy)
   return {
     sut,
-    authUserByTokenStub
+    authUserByTokenSpy
   }
 }
 
 const mockRequest = (): AuthMiddleware.Request => ({
-  accessToken: 'any_token'
+  accessToken: faker.datatype.uuid()
 })
 
 describe('Auth Middleware', () => {
@@ -38,32 +30,30 @@ describe('Auth Middleware', () => {
   })
 
   test('Should call AuthUserByToken with correct accessToken', async () => {
-    const { sut, authUserByTokenStub } = makeSut()
-    const authSpy = jest.spyOn(authUserByTokenStub, 'auth')
-    const httpRequest = mockRequest()
-    await sut.handle(mockRequest())
-    expect(authSpy).toHaveBeenCalledWith(httpRequest.accessToken)
+    const { sut, authUserByTokenSpy } = makeSut()
+    const authSpy = jest.spyOn(authUserByTokenSpy, 'auth')
+    const request = mockRequest()
+    await sut.handle(request)
+    expect(authSpy).toHaveBeenCalledWith(request.accessToken)
   })
 
   test('Should return 403 if AuthUserByToken returns null', async () => {
-    const { sut, authUserByTokenStub } = makeSut()
-    jest.spyOn(authUserByTokenStub, 'auth').mockReturnValueOnce(Promise.resolve(null))
+    const { sut, authUserByTokenSpy } = makeSut()
+    jest.spyOn(authUserByTokenSpy, 'auth').mockReturnValueOnce(Promise.resolve(null))
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
 
   test('Should return 500 if AuthUserByToken throws', async () => {
-    const { sut, authUserByTokenStub } = makeSut()
-    jest.spyOn(authUserByTokenStub, 'auth').mockReturnValueOnce(Promise.reject(new Error()))
+    const { sut, authUserByTokenSpy } = makeSut()
+    jest.spyOn(authUserByTokenSpy, 'auth').mockReturnValueOnce(Promise.reject(new Error()))
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   test('Should return 200 if AuthUserByToken returns an account Id', async () => {
-    const { sut } = makeSut()
+    const { sut, authUserByTokenSpy } = makeSut()
     const httpResponse = await sut.handle(mockRequest())
-    expect(httpResponse).toEqual(ok({
-      accountId: 'any_id'
-    }))
+    expect(httpResponse).toEqual(ok({ accountId: authUserByTokenSpy.result.id }))
   })
 })

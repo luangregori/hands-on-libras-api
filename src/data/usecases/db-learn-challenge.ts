@@ -1,12 +1,12 @@
-import { LearnChallenge } from '@/domain/usecases'
+import { LearnLesson } from '@/domain/usecases'
 import { FindLearningInfoRepository } from '@/data/protocols'
 
-export class DbLearnChallenge implements LearnChallenge {
+export class DbLearnLesson implements LearnLesson {
   constructor (
     private readonly findLearningInfoRepository: FindLearningInfoRepository
   ) {}
 
-  async learn (challengeId: string): Promise<LearnChallenge.Result> {
-    return await this.findLearningInfoRepository.findByChallengeId(challengeId)
+  async learn (lessonId: string): Promise<LearnLesson.Result> {
+    return await this.findLearningInfoRepository.findByLessonId(lessonId)
   }
 }

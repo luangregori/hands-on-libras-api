@@ -1,9 +1,9 @@
 import { LoadRanking } from '@/domain/usecases'
-import { LoadTestResultsRepository, FindAccountRepository } from '@/data/protocols'
-import { TestResultModel } from '@/domain/models'
+import { LoadChallengeResultsRepository, FindAccountRepository } from '@/data/protocols'
+import { ChallengeResultModel } from '@/domain/models'
 export class DbLoadRanking implements LoadRanking {
   constructor (
-    private readonly loadTestResultsRepository: LoadTestResultsRepository,
+    private readonly loadChallengeResultsRepository: LoadChallengeResultsRepository,
     private readonly findAccountRepository: FindAccountRepository
   ) { }
 
@@ -11,7 +11,7 @@ export class DbLoadRanking implements LoadRanking {
     // 1. Diminui a quantidade de dias e faz a busca pelos TEST-RESULTS
     const now = new Date()
     const dateToCompare = new Date(now.setDate(now.getDate() - loadRankingParams.days))
-    const results = await this.loadTestResultsRepository.findByDate(dateToCompare)
+    const results = await this.loadChallengeResultsRepository.findByDate(dateToCompare)
 
     // 2. Agrupa os resultados por ACCOUNT-ID
     const groupsByAccountId = results.reduce((groups, item) => ({
@@ -24,7 +24,7 @@ export class DbLoadRanking implements LoadRanking {
     // 3. Para cada grupo, calcula a pontuação e busca o ACCOUNT
     for (const [key, value] of Object.entries(groupsByAccountId)) {
       const account = await this.findAccountRepository.findById(key)
-      const results = value as TestResultModel[]
+      const results = value as ChallengeResultModel[]
       const scoreSum = results.reduce((previousValue, currentValue) => previousValue + currentValue.score, 0)
       ranking.push({
         position: 0,
