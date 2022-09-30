@@ -20,3 +20,5 @@ export const mockAuthenticationParams = (): Authentication.Params => ({
   email: faker.internet.email(),
   password: faker.internet.password()
 })
+
+export const mockAccountId = (): string => faker.datatype.uuid()
