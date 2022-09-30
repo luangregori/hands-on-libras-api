@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { AddAccount, Authentication, CheckEmailAccount, LoadUserScore, AuthUserByToken } from '@/domain/usecases'
+import { AddAccount, Authentication, CheckEmailAccount, LoadUserScore, AuthUserByToken, LoadUserInfo } from '@/domain/usecases'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
 import { mockAccountModel } from '@/tests/domain/mocks'
 
@@ -60,6 +60,22 @@ export class AuthUserByTokenSpy implements AuthUserByToken {
 
   async auth (accessToken: string): Promise<AuthUserByToken.Result> {
     this.accessToken = accessToken
+    return this.result
+  }
+}
+
+export class LoadUserInfoSpy implements LoadUserInfo {
+  accountId: string
+  result = {
+    name: faker.name.findName(),
+    image_url: faker.image.imageUrl(),
+    score: faker.datatype.number(),
+    ranking: faker.datatype.number(),
+    achievements: [faker.random.word()]
+  }
+
+  async load (accountId: string): Promise<LoadUserInfo.Result> {
+    this.accountId = accountId
     return this.result
   }
 }
