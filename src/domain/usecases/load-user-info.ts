@@ -5,9 +5,7 @@ export interface LoadUserInfo {
 export namespace LoadUserInfo {
   export interface Result {
     name: string
-    image_url: string
-    score: number
-    ranking: number
+    image_url?: string
     achievements: string[]
   }
 }
