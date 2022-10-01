@@ -1,5 +1,13 @@
 import faker from 'faker'
-import { AddAccount, Authentication, CheckEmailAccount, LoadUserScore, AuthUserByToken, LoadUserInfo } from '@/domain/usecases'
+import {
+  AddAccount,
+  Authentication,
+  CheckEmailAccount,
+  LoadUserScore,
+  AuthUserByToken,
+  LoadUserInfo,
+  UpdateAccount
+} from '@/domain/usecases'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
 import { mockAccountModel } from '@/tests/domain/mocks'
 
@@ -76,6 +84,16 @@ export class LoadUserInfoSpy implements LoadUserInfo {
 
   async load (accountId: string): Promise<LoadUserInfo.Result> {
     this.accountId = accountId
+    return this.result
+  }
+}
+
+export class UpdateAccountSpy implements UpdateAccount {
+  params: UpdateAccount.Params
+  result = mockAccountModel()
+
+  async updateById (accountId: string, params: UpdateAccount.Params): Promise<UpdateAccount.Result> {
+    this.params = params
     return this.result
   }
 }

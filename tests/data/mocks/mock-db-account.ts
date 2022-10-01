@@ -1,4 +1,4 @@
-import { AddAccountRepository, FindAccountRepository } from '@/data/protocols'
+import { AddAccountRepository, FindAccountRepository, UpdateAccountRepository } from '@/data/protocols'
 import { AccountModel } from '@/domain/models'
 import { mockAccountModel } from '@/tests/domain/mocks'
 
@@ -24,6 +24,16 @@ export class FindAccountRepositorySpy implements FindAccountRepository {
 
   async findById (id: string): Promise<AccountModel> {
     this.id = id
+    return this.result
+  }
+}
+
+export class UpdateAccountRepositorySpy implements UpdateAccountRepository {
+  params: UpdateAccountRepository.Params
+  result = mockAccountModel()
+
+  async updateById (accountId: string, params: UpdateAccountRepository.Params): Promise<AccountModel> {
+    this.params = params
     return this.result
   }
 }
