@@ -15,6 +15,9 @@ export class DbUpdateAccount implements UpdateAccount {
       if (!isValid) {
         throw new Error('Invalid password')
       }
+      params = { ...params, password: params.newPassword } as any
+      delete params.oldPassword
+      delete params.newPassword
     }
 
     return await this.updateAccountRepository.updateById(accountId, params)

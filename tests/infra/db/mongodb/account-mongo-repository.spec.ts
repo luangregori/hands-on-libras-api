@@ -63,4 +63,34 @@ describe('Account Mongo Repository', () => {
     expect(account.email).toBe('any_mail@mail.com')
     expect(account.password).toBe('any_hash')
   })
+
+  describe('UpdateAccountRepository implementation', () => {
+    test('Should return an account updated just one field', async () => {
+      const { insertedId } = await accountCollection.insertOne({
+        name: 'any_name',
+        email: 'any_mail@mail.com',
+        password: 'any_hash',
+        image_url: 'any_image_url'
+      })
+      const sut = makeSut()
+      const result = await sut.updateById(insertedId, { name: 'new_name' })
+      expect(result).toBeDefined()
+      expect(result.name).toBe('new_name')
+      expect(result.password).toBe('any_hash')
+    })
+    test('Should return an account updated multiple fields', async () => {
+      const { insertedId } = await accountCollection.insertOne({
+        name: 'any_name',
+        email: 'any_mail@mail.com',
+        password: 'any_hash',
+        image_url: 'any_image_url'
+      })
+      const sut = makeSut()
+      const result = await sut.updateById(insertedId, { name: 'new_name', password: 'new_password' })
+      expect(result).toBeDefined()
+      expect(result.name).toBe('new_name')
+      expect(result.password).toBe('new_password')
+      expect(result.image_url).toBe('any_image_url')
+    })
+  })
 })

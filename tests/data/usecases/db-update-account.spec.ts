@@ -67,7 +67,12 @@ describe('DbUpdateAccount UseCase', () => {
     const accountId = mockAccountId()
     const updateAccountParams = mockUpdateAccountParams()
     await sut.updateById(accountId, updateAccountParams)
-    expect(updateSpy).toHaveBeenCalledWith(accountId, updateAccountParams)
+    expect(updateSpy).toHaveBeenCalledWith(accountId, {
+      name: updateAccountParams.name,
+      email: updateAccountParams.email,
+      password: updateAccountParams.newPassword,
+      image_url: updateAccountParams.image_url
+    })
   })
 
   test('Should throw if UpdateAccountRepository throws', async () => {
