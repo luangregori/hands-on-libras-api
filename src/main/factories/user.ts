@@ -1,9 +1,9 @@
 import env from '@/main/config/env'
 import { LoginController, SignUpController, UserInfoController } from '@/presentation/controllers'
 import { EmailValidatorAdapter } from '@/infra/validators'
-import { DbAddAccount, DbCheckEmailAccount, DbAuthentication, DbLoadUserInfo } from '@/data/usecases'
+import { DbAddAccount, DbCheckEmailAccount, DbAuthentication, DbLoadUserInfo, DbLoadUserScore } from '@/data/usecases'
 import { BcryptAdapter, JwtAdapter } from '@/infra/criptography'
-import { LogMongoRepository, AccountMongoRepository } from '@/infra/db/'
+import { LogMongoRepository, AccountMongoRepository, ChallengeResultMongoRepository } from '@/infra/db/'
 import { Controller } from '@/presentation/protocols'
 import { LogControllerDecorator } from '@/main/decorators'
 
@@ -35,7 +35,9 @@ export const makeSignUpController = (): Controller => {
 export const makeUserInfoController = (): Controller => {
   const accountMongoRepository = new AccountMongoRepository()
   const logMongoRepository = new LogMongoRepository()
+  const challengeResultMongoRepository = new ChallengeResultMongoRepository()
   const dbLoadUserInfo = new DbLoadUserInfo(accountMongoRepository)
-  const userInfoController = new UserInfoController(dbLoadUserInfo)
+  const dbLoadUserScore = new DbLoadUserScore(challengeResultMongoRepository)
+  const userInfoController = new UserInfoController(dbLoadUserInfo, dbLoadUserScore)
   return new LogControllerDecorator(userInfoController, logMongoRepository)
 }
