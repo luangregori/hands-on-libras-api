@@ -82,6 +82,12 @@ describe('DbUpdateAccount UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  test('Should not return the password', async () => {
+    const { sut } = makeSut()
+    const account = await sut.updateById(mockAccountId(), mockUpdateAccountParams()) as any
+    expect(account.password).toBeUndefined()
+  })
+
   test('Should return an account on update successfully', async () => {
     const { sut, updateAccountRepositorySpy } = makeSut()
     const account = await sut.updateById(mockAccountId(), mockUpdateAccountParams())

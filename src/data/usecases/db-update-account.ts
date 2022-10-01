@@ -20,6 +20,8 @@ export class DbUpdateAccount implements UpdateAccount {
       delete params.newPassword
     }
 
-    return await this.updateAccountRepository.updateById(accountId, params)
+    const updatedAccount = await this.updateAccountRepository.updateById(accountId, params)
+    delete updatedAccount.password
+    return updatedAccount
   }
 }
