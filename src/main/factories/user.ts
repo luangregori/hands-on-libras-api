@@ -1,11 +1,27 @@
 import env from '@/main/config/env'
-import { LoginController, SignUpController, UserInfoController } from '@/presentation/controllers'
-import { EmailValidatorAdapter } from '@/infra/validators'
-import { DbAddAccount, DbCheckEmailAccount, DbAuthentication, DbLoadUserInfo, DbLoadUserScore } from '@/data/usecases'
-import { BcryptAdapter, JwtAdapter } from '@/infra/criptography'
-import { LogMongoRepository, AccountMongoRepository, ChallengeResultMongoRepository } from '@/infra/db/'
 import { Controller } from '@/presentation/protocols'
 import { LogControllerDecorator } from '@/main/decorators'
+import { EmailValidatorAdapter } from '@/infra/validators'
+import {
+  LoginController,
+  SignUpController,
+  UserInfoController,
+  UpdateUserInfoController
+} from '@/presentation/controllers'
+import {
+  DbAddAccount,
+  DbCheckEmailAccount,
+  DbAuthentication,
+  DbLoadUserInfo,
+  DbLoadUserScore,
+  DbUpdateAccount
+} from '@/data/usecases'
+import {
+  LogMongoRepository,
+  AccountMongoRepository,
+  ChallengeResultMongoRepository
+} from '@/infra/db/'
+import { BcryptAdapter, JwtAdapter } from '@/infra/criptography'
 
 export const makeLoginController = (): Controller => {
   const salt = 12
@@ -40,4 +56,14 @@ export const makeUserInfoController = (): Controller => {
   const dbLoadUserScore = new DbLoadUserScore(challengeResultMongoRepository)
   const userInfoController = new UserInfoController(dbLoadUserInfo, dbLoadUserScore)
   return new LogControllerDecorator(userInfoController, logMongoRepository)
+}
+
+export const makeUpdateUserInfoController = (): Controller => {
+  const salt = 12
+  const bcryptAdapter = new BcryptAdapter(salt)
+  const accountMongoRepository = new AccountMongoRepository()
+  const logMongoRepository = new LogMongoRepository()
+  const dbUpdateAccount = new DbUpdateAccount(accountMongoRepository, bcryptAdapter, accountMongoRepository)
+  const updateUserInfoController = new UpdateUserInfoController(dbUpdateAccount)
+  return new LogControllerDecorator(updateUserInfoController, logMongoRepository)
 }
