@@ -14,7 +14,8 @@ import {
   DbAuthentication,
   DbLoadUserInfo,
   DbLoadUserScore,
-  DbUpdateAccount
+  DbUpdateAccount,
+  DbLoadRanking
 } from '@/data/usecases'
 import {
   LogMongoRepository,
@@ -54,7 +55,8 @@ export const makeUserInfoController = (): Controller => {
   const challengeResultMongoRepository = new ChallengeResultMongoRepository()
   const dbLoadUserInfo = new DbLoadUserInfo(accountMongoRepository)
   const dbLoadUserScore = new DbLoadUserScore(challengeResultMongoRepository)
-  const userInfoController = new UserInfoController(dbLoadUserInfo, dbLoadUserScore)
+  const dbLoadRanking = new DbLoadRanking(challengeResultMongoRepository, accountMongoRepository)
+  const userInfoController = new UserInfoController(dbLoadUserInfo, dbLoadUserScore, dbLoadRanking)
   return new LogControllerDecorator(userInfoController, logMongoRepository)
 }
 
