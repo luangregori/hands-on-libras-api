@@ -6,10 +6,11 @@ export class LoadRankingSpy implements LoadRanking {
   result = [{
     position: faker.datatype.number(),
     name: faker.name.findName(),
-    score: faker.datatype.number()
+    score: faker.datatype.number(),
+    id: faker.datatype.uuid()
   }]
 
-  async load(params: LoadRanking.Params): Promise<LoadRanking.Result[]> {
+  async load (params: LoadRanking.Params): Promise<LoadRanking.Result[]> {
     this.params = params
     return this.result
   }
