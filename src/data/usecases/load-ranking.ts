@@ -29,7 +29,8 @@ export class DbLoadRanking implements LoadRanking {
       ranking.push({
         position: 0,
         name: account.name,
-        score: scoreSum
+        score: scoreSum,
+        id: account.id
       })
     }
 

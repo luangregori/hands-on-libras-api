@@ -2,23 +2,26 @@ import faker from 'faker'
 import { UserInfoController } from '@/presentation/controllers'
 import { ok, serverError } from '@/presentation/helpers/http-helper'
 import { ServerError } from '@/presentation/errors'
-import { LoadUserInfoSpy, LoadUserScoreSpy } from '@/tests/presentation/mocks'
+import { LoadUserInfoSpy, LoadUserScoreSpy, LoadRankingSpy } from '@/tests/presentation/mocks'
 import { throwError } from '@/tests/domain/mocks'
 
 interface SutTypes {
   sut: UserInfoController
   loadUserInfoSpy: LoadUserInfoSpy
   loadUserScoreSpy: LoadUserScoreSpy
+  loadRankingSpy: LoadRankingSpy
 }
 
 const makeSut = (): SutTypes => {
   const loadUserInfoSpy = new LoadUserInfoSpy()
   const loadUserScoreSpy = new LoadUserScoreSpy()
-  const sut = new UserInfoController(loadUserInfoSpy, loadUserScoreSpy)
+  const loadRankingSpy = new LoadRankingSpy()
+  const sut = new UserInfoController(loadUserInfoSpy, loadUserScoreSpy, loadRankingSpy)
   return {
     sut,
     loadUserInfoSpy,
-    loadUserScoreSpy
+    loadUserScoreSpy,
+    loadRankingSpy
   }
 }
 
