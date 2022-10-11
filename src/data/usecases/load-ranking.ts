@@ -30,7 +30,8 @@ export class DbLoadRanking implements LoadRanking {
         position: 0,
         name: account.name,
         score: scoreSum,
-        id: account.id
+        id: account.id,
+        image_url: account.image_url
       })
     }
 
