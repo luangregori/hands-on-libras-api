@@ -12,5 +12,6 @@ export namespace LoadRanking {
     name: string
     score: number
     id: string
+    image_url: string
   }
 }

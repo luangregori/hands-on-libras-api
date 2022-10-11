@@ -46,11 +46,13 @@ describe('User Info Controller', () => {
   })
 
   test('Should return 200 if valid data is provided', async () => {
-    const { sut, loadUserInfoSpy, loadUserScoreSpy } = makeSut()
-    const httpResponse = await sut.handle(mockRequest())
+    const { sut, loadUserInfoSpy, loadUserScoreSpy, loadRankingSpy } = makeSut()
+    const httpResponse = await sut.handle({ accountId: loadRankingSpy.result[0].id })
+    console.log('httpResponse', httpResponse)
     expect(httpResponse).toEqual(ok({
       userInfo: loadUserInfoSpy.result,
-      userScore: loadUserScoreSpy.result
+      userScore: loadUserScoreSpy.result,
+      userPosition: loadRankingSpy.result[0].position
     }))
   })
 })

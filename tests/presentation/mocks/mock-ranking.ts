@@ -7,7 +7,8 @@ export class LoadRankingSpy implements LoadRanking {
     position: faker.datatype.number(),
     name: faker.name.findName(),
     score: faker.datatype.number(),
-    id: faker.datatype.uuid()
+    id: faker.datatype.uuid(),
+    image_url: faker.internet.url()
   }]
 
   async load (params: LoadRanking.Params): Promise<LoadRanking.Result[]> {
