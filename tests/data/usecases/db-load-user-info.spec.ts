@@ -1,20 +1,24 @@
 import { DbLoadUserInfo } from '@/data/usecases'
-import { FindAccountRepositorySpy } from '@/tests/data/mocks'
+import { FindAccountRepositorySpy, FindAchievementsRepositorySpy } from '@/tests/data/mocks'
 import { throwError, mockAccountId } from '@/tests/domain/mocks'
 
 interface SutTypes {
   sut: DbLoadUserInfo
   findAccountRepositorySpy: FindAccountRepositorySpy
+  findAchievementsRepositorySpy: FindAchievementsRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const findAccountRepositorySpy = new FindAccountRepositorySpy()
+  const findAchievementsRepositorySpy = new FindAchievementsRepositorySpy()
   const sut = new DbLoadUserInfo(
-    findAccountRepositorySpy
+    findAccountRepositorySpy,
+    findAchievementsRepositorySpy
   )
   return {
     sut,
-    findAccountRepositorySpy
+    findAccountRepositorySpy,
+    findAchievementsRepositorySpy
   }
 }
 

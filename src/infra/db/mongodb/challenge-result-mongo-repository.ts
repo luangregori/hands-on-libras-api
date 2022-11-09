@@ -30,6 +30,18 @@ export class ChallengeResultMongoRepository implements LoadChallengeResultsRepos
     return result.map(MongoHelper.map)
   }
 
+  async findByDateAndAccountId (date: Date, accountId: string): Promise<ChallengeResultModel[]> {
+    const challengeResultsCollection = await MongoHelper.getCollection('challenge-results')
+    const result = await challengeResultsCollection.find({
+      updatedAt: {
+        $gte: date
+      },
+      accountId,
+      status: StatusChallengeResult.COMPLETED
+    }).toArray()
+    return result.map(MongoHelper.map)
+  }
+
   async findByAccountId (accountId: string): Promise<ChallengeResultModel[]> {
     const challengeResultsCollection = await MongoHelper.getCollection('challenge-results')
     const result = await challengeResultsCollection.find({ accountId }).toArray()

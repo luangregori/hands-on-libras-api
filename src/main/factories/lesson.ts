@@ -5,7 +5,8 @@ import {
   LessonMongoRepository,
   ChallengeResultMongoRepository,
   LearningInfoMongoRepository,
-  ChallengeQuestionMongoRepository
+  ChallengeQuestionMongoRepository,
+  AchievementMongoRepository
 } from '@/infra/db'
 import {
   CompleteLearnController,
@@ -21,7 +22,8 @@ import {
   DbLearnLesson,
   DbCompleteLearn,
   DbChallengeLesson,
-  DbCompleteChallenge
+  DbCompleteChallenge,
+  DbCheckAchievements
 } from '@/data/usecases'
 
 export const makeLoadLessonController = (): Controller => {
@@ -51,8 +53,10 @@ export const makeLearnLessonController = (): Controller => {
 
 export const makeCompleteLearnController = (): Controller => {
   const challengeResultMongoRepository = new ChallengeResultMongoRepository()
+  const achievementsMongoRepository = new AchievementMongoRepository()
   const dbCompleteLearn = new DbCompleteLearn(challengeResultMongoRepository, challengeResultMongoRepository)
-  const completeLearnController = new CompleteLearnController(dbCompleteLearn)
+  const dbCheckAchievements = new DbCheckAchievements(challengeResultMongoRepository, achievementsMongoRepository)
+  const completeLearnController = new CompleteLearnController(dbCompleteLearn, dbCheckAchievements)
   const logMongoRepository = new LogMongoRepository()
   return new LogControllerDecorator(completeLearnController, logMongoRepository)
 }
@@ -68,8 +72,10 @@ export const makeChallengeLessonController = (): Controller => {
 
 export const makeCompleteChallengeController = (): Controller => {
   const challengeResultMongoRepository = new ChallengeResultMongoRepository()
+  const achievementsMongoRepository = new AchievementMongoRepository()
   const dbCompleteChallenge = new DbCompleteChallenge(challengeResultMongoRepository, challengeResultMongoRepository)
-  const completeChallengeController = new CompleteChallengeController(dbCompleteChallenge)
+  const dbCheckAchievements = new DbCheckAchievements(challengeResultMongoRepository, achievementsMongoRepository)
+  const completeChallengeController = new CompleteChallengeController(dbCompleteChallenge, dbCheckAchievements)
   const logMongoRepository = new LogMongoRepository()
   return new LogControllerDecorator(completeChallengeController, logMongoRepository)
 }
