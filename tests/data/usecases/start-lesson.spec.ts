@@ -39,6 +39,10 @@ const makeFakeLoadChallengeResultsRepositoryStub = (): LoadChallengeResultsRepos
       throw new Error('Method not implemented.')
     }
 
+    async findByDateAndAccountId (date: Date, accountId: string): Promise<ChallengeResultModel[]> {
+      throw new Error('Method not implemented.')
+    }
+
     async findByAccountId (accountId: string): Promise<ChallengeResultModel[]> {
       throw new Error('Method not implemented.')
     }

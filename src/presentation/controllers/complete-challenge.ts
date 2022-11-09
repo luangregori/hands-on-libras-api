@@ -1,11 +1,12 @@
 import { Controller, HttpResponse } from '@/presentation/protocols'
 import { ok, serverError, badRequest } from '@/presentation/helpers/http-helper'
 import { MissingParamError } from '@/presentation/errors'
-import { CompleteChallenge } from '@/domain/usecases'
+import { CompleteChallenge, CheckAchievements } from '@/domain/usecases'
 
 export class CompleteChallengeController implements Controller {
   constructor (
-    private readonly completeChallenge: CompleteChallenge
+    private readonly completeChallenge: CompleteChallenge,
+    private readonly checkAchievements: CheckAchievements
   ) { }
 
   async handle (request: CompleteChallengeController.Request): Promise<HttpResponse> {
@@ -21,6 +22,7 @@ export class CompleteChallengeController implements Controller {
       const completeChallengeParams: CompleteChallenge.Params = { lessonId, accountId, lives: Number(lives) }
 
       await this.completeChallenge.complete(completeChallengeParams)
+      await this.checkAchievements.check(accountId)
 
       return ok()
     } catch (error) {

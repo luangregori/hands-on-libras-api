@@ -2,20 +2,23 @@ import faker from 'faker'
 import { CompleteLearnController } from '@/presentation/controllers'
 import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
 import { MissingParamError, ServerError } from '@/presentation/errors'
-import { CompleteLearnSpy } from '@/tests/presentation/mocks'
+import { CompleteLearnSpy, CheckAchievementsSpy } from '@/tests/presentation/mocks'
 import { throwError } from '@/tests/domain/mocks'
 
 interface SutTypes {
   sut: CompleteLearnController
   completeLearnSpy: CompleteLearnSpy
+  checkAchievementsSpy: CheckAchievementsSpy
 }
 
 const makeSut = (): SutTypes => {
   const completeLearnSpy = new CompleteLearnSpy()
-  const sut = new CompleteLearnController(completeLearnSpy)
+  const checkAchievementsSpy = new CheckAchievementsSpy()
+  const sut = new CompleteLearnController(completeLearnSpy, checkAchievementsSpy)
   return {
     sut,
-    completeLearnSpy
+    completeLearnSpy,
+    checkAchievementsSpy
   }
 }
 

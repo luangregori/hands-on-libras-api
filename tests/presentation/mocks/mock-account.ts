@@ -9,7 +9,7 @@ import {
   UpdateAccount
 } from '@/domain/usecases'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
-import { mockAccountModel } from '@/tests/domain/mocks'
+import { mockAccountModel, mockAchievementModel } from '@/tests/domain/mocks'
 
 export class AddAccountSpy implements AddAccount {
   params: AddAccount.Params
@@ -79,7 +79,7 @@ export class LoadUserInfoSpy implements LoadUserInfo {
     image_url: faker.image.imageUrl(),
     score: faker.datatype.number(),
     ranking: faker.datatype.number(),
-    achievements: [faker.random.word()]
+    achievements: [mockAchievementModel()]
   }
 
   async load (accountId: string): Promise<LoadUserInfo.Result> {

@@ -20,7 +20,8 @@ import {
 import {
   LogMongoRepository,
   AccountMongoRepository,
-  ChallengeResultMongoRepository
+  ChallengeResultMongoRepository,
+  AchievementMongoRepository
 } from '@/infra/db/'
 import { BcryptAdapter, JwtAdapter } from '@/infra/criptography'
 
@@ -53,7 +54,8 @@ export const makeUserInfoController = (): Controller => {
   const accountMongoRepository = new AccountMongoRepository()
   const logMongoRepository = new LogMongoRepository()
   const challengeResultMongoRepository = new ChallengeResultMongoRepository()
-  const dbLoadUserInfo = new DbLoadUserInfo(accountMongoRepository)
+  const achievementMongoRepository = new AchievementMongoRepository()
+  const dbLoadUserInfo = new DbLoadUserInfo(accountMongoRepository, achievementMongoRepository)
   const dbLoadUserScore = new DbLoadUserScore(challengeResultMongoRepository)
   const dbLoadRanking = new DbLoadRanking(challengeResultMongoRepository, accountMongoRepository)
   const userInfoController = new UserInfoController(dbLoadUserInfo, dbLoadUserScore, dbLoadRanking)
