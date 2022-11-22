@@ -6,7 +6,8 @@ import {
   LoginController,
   SignUpController,
   UserInfoController,
-  UpdateUserInfoController
+  UpdateUserInfoController,
+  VerifyEmailController
 } from '@/presentation/controllers'
 import {
   DbAddAccount,
@@ -16,7 +17,8 @@ import {
   DbLoadUserScore,
   DbUpdateAccount,
   DbLoadRanking,
-  DbSendEmail
+  DbSendEmail,
+  DbVerifyEmail
 } from '@/data/usecases'
 import {
   LogMongoRepository,
@@ -79,4 +81,12 @@ export const makeUpdateUserInfoController = (): Controller => {
   const dbUpdateAccount = new DbUpdateAccount(accountMongoRepository, bcryptAdapter, accountMongoRepository)
   const updateUserInfoController = new UpdateUserInfoController(dbUpdateAccount)
   return new LogControllerDecorator(updateUserInfoController, logMongoRepository)
+}
+
+export const makeVerifyEmailController = (): Controller => {
+  const accountMongoRepository = new AccountMongoRepository()
+  const dbVerifyEmail = new DbVerifyEmail(accountMongoRepository, accountMongoRepository)
+  const logMongoRepository = new LogMongoRepository()
+  const verifyEmailController = new VerifyEmailController(dbVerifyEmail)
+  return new LogControllerDecorator(verifyEmailController, logMongoRepository)
 }
