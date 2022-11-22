@@ -6,7 +6,8 @@ import {
   LoginController,
   SignUpController,
   UserInfoController,
-  UpdateUserInfoController
+  UpdateUserInfoController,
+  VerifyEmailController
 } from '@/presentation/controllers'
 import {
   DbAddAccount,
@@ -15,7 +16,9 @@ import {
   DbLoadUserInfo,
   DbLoadUserScore,
   DbUpdateAccount,
-  DbLoadRanking
+  DbLoadRanking,
+  DbSendEmail,
+  DbVerifyEmail
 } from '@/data/usecases'
 import {
   LogMongoRepository,
@@ -24,6 +27,7 @@ import {
   AchievementMongoRepository
 } from '@/infra/db/'
 import { BcryptAdapter, JwtAdapter } from '@/infra/criptography'
+import { NodeMailerAdapter } from '@/infra/remote'
 
 export const makeLoginController = (): Controller => {
   const salt = 12
@@ -46,7 +50,14 @@ export const makeSignUpController = (): Controller => {
   const checkEmailAccount = new DbCheckEmailAccount(accountMongoRepository)
   const jwtAdapter = new JwtAdapter(env.jwtSecret)
   const authentication = new DbAuthentication(accountMongoRepository, bcryptAdapter, jwtAdapter)
-  const signUpController = new SignUpController(emailValidatorAdapter, dbAddAccount, checkEmailAccount, authentication)
+  const nodeMailerAdapter = new NodeMailerAdapter(
+    env.nodeMailerConfig.host,
+    Number(env.nodeMailerConfig.port),
+    env.nodeMailerConfig.user,
+    env.nodeMailerConfig.pass
+  )
+  const sendEmailVerification = new DbSendEmail(nodeMailerAdapter, accountMongoRepository)
+  const signUpController = new SignUpController(emailValidatorAdapter, dbAddAccount, checkEmailAccount, authentication, sendEmailVerification)
   return new LogControllerDecorator(signUpController, logMongoRepository)
 }
 
@@ -70,4 +81,12 @@ export const makeUpdateUserInfoController = (): Controller => {
   const dbUpdateAccount = new DbUpdateAccount(accountMongoRepository, bcryptAdapter, accountMongoRepository)
   const updateUserInfoController = new UpdateUserInfoController(dbUpdateAccount)
   return new LogControllerDecorator(updateUserInfoController, logMongoRepository)
+}
+
+export const makeVerifyEmailController = (): Controller => {
+  const accountMongoRepository = new AccountMongoRepository()
+  const dbVerifyEmail = new DbVerifyEmail(accountMongoRepository, accountMongoRepository)
+  const logMongoRepository = new LogMongoRepository()
+  const verifyEmailController = new VerifyEmailController(dbVerifyEmail)
+  return new LogControllerDecorator(verifyEmailController, logMongoRepository)
 }

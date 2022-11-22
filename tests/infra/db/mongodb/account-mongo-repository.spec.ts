@@ -26,6 +26,7 @@ describe('Account Mongo Repository', () => {
     const account = await sut.add({
       name: 'any_name',
       email: 'any_mail@mail.com',
+      email_verified: false,
       password: 'any_password'
     })
     expect(account).toBeTruthy()

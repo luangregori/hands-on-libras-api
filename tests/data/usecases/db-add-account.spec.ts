@@ -40,6 +40,7 @@ describe('DbAddAccount UseCase', () => {
     await sut.add(addAccountParams)
     expect(addAccountRepositorySpy.params).toEqual({
       name: addAccountParams.name,
+      email_verified: false,
       email: addAccountParams.email,
       password: hasherSpy.digest
     })

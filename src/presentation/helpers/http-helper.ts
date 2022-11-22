@@ -26,6 +26,11 @@ export const ok = (data: any = { success: true }): HttpResponse => ({
   body: data
 })
 
+export const html = (data: any): HttpResponse => ({
+  statusCode: 300,
+  body: data
+})
+
 export const noContent = (): HttpResponse => ({
   statusCode: 204,
   body: {}

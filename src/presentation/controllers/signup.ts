@@ -1,7 +1,7 @@
 import { HttpResponse, Controller } from '@/presentation/protocols'
 import { MissingParamError, InvalidParamError, EmailAlreadyRegisteredError } from '@/presentation/errors'
 import { badRequest, serverError, ok, forbidden } from '@/presentation/helpers/http-helper'
-import { AddAccount, CheckEmailAccount, Authentication } from '@/domain/usecases'
+import { AddAccount, CheckEmailAccount, Authentication, SendEmailVerification } from '@/domain/usecases'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
 
 export class SignUpController implements Controller {
@@ -9,7 +9,8 @@ export class SignUpController implements Controller {
     private readonly emailValidator: EmailValidator,
     private readonly addAccount: AddAccount,
     private readonly checkEmailAccount: CheckEmailAccount,
-    private readonly authentication: Authentication
+    private readonly authentication: Authentication,
+    private readonly sendEmailVerification: SendEmailVerification
   ) { }
 
   async handle (request: SignUpController.Request): Promise<HttpResponse> {
@@ -41,6 +42,8 @@ export class SignUpController implements Controller {
         email,
         password
       })
+
+      await this.sendEmailVerification.sendEmailVerification(email)
 
       const authenticationModel = await this.authentication.auth({
         email,
