@@ -4,4 +4,5 @@ export interface AccountModel {
   email: string
   password: string
   image_url?: string
+  email_verified?: boolean
 }

@@ -15,7 +15,8 @@ import {
   DbLoadUserInfo,
   DbLoadUserScore,
   DbUpdateAccount,
-  DbLoadRanking
+  DbLoadRanking,
+  DbSendEmail
 } from '@/data/usecases'
 import {
   LogMongoRepository,
@@ -24,6 +25,7 @@ import {
   AchievementMongoRepository
 } from '@/infra/db/'
 import { BcryptAdapter, JwtAdapter } from '@/infra/criptography'
+import { NodeMailerAdapter } from '@/infra/remote'
 
 export const makeLoginController = (): Controller => {
   const salt = 12
@@ -46,7 +48,14 @@ export const makeSignUpController = (): Controller => {
   const checkEmailAccount = new DbCheckEmailAccount(accountMongoRepository)
   const jwtAdapter = new JwtAdapter(env.jwtSecret)
   const authentication = new DbAuthentication(accountMongoRepository, bcryptAdapter, jwtAdapter)
-  const signUpController = new SignUpController(emailValidatorAdapter, dbAddAccount, checkEmailAccount, authentication)
+  const nodeMailerAdapter = new NodeMailerAdapter(
+    env.nodeMailerConfig.host,
+    Number(env.nodeMailerConfig.port),
+    env.nodeMailerConfig.user,
+    env.nodeMailerConfig.pass
+  )
+  const sendEmailVerification = new DbSendEmail(nodeMailerAdapter, accountMongoRepository)
+  const signUpController = new SignUpController(emailValidatorAdapter, dbAddAccount, checkEmailAccount, authentication, sendEmailVerification)
   return new LogControllerDecorator(signUpController, logMongoRepository)
 }
 

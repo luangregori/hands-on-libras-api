@@ -6,7 +6,8 @@ import {
   LoadUserScore,
   AuthUserByToken,
   LoadUserInfo,
-  UpdateAccount
+  UpdateAccount,
+  SendEmailVerification
 } from '@/domain/usecases'
 import { EmailValidator } from '@/presentation/protocols/email-validator'
 import { mockAccountModel, mockAchievementModel } from '@/tests/domain/mocks'
@@ -95,5 +96,13 @@ export class UpdateAccountSpy implements UpdateAccount {
   async updateById (accountId: string, params: UpdateAccount.Params): Promise<UpdateAccount.Result> {
     this.params = params
     return this.result
+  }
+}
+
+export class SendEmailVerificationSpy implements SendEmailVerification {
+  email: string
+
+  async sendEmailVerification (email: string): Promise<void> {
+    this.email = email
   }
 }

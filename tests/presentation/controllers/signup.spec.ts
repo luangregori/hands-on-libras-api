@@ -2,7 +2,7 @@ import faker from 'faker'
 import { SignUpController } from '@/presentation/controllers'
 import { MissingParamError, InvalidParamError, ServerError, EmailAlreadyRegisteredError } from '@/presentation/errors'
 import { ok, serverError, badRequest, forbidden } from '@/presentation/helpers/http-helper'
-import { AddAccountSpy, CheckEmailAccountSpy, AuthenticationSpy, EmailValidatorSpy } from '@/tests/presentation/mocks'
+import { AddAccountSpy, CheckEmailAccountSpy, AuthenticationSpy, EmailValidatorSpy, SendEmailVerificationSpy } from '@/tests/presentation/mocks'
 import { throwError } from '@/tests/domain/mocks'
 
 interface SutTypes {
@@ -11,6 +11,7 @@ interface SutTypes {
   addAccountSpy: AddAccountSpy
   checkEmailAccountSpy: CheckEmailAccountSpy
   authenticationSpy: AuthenticationSpy
+  sendEmailVerificationSpy: SendEmailVerificationSpy
 }
 
 const makeSut = (): SutTypes => {
@@ -18,13 +19,15 @@ const makeSut = (): SutTypes => {
   const addAccountSpy = new AddAccountSpy()
   const checkEmailAccountSpy = new CheckEmailAccountSpy()
   const authenticationSpy = new AuthenticationSpy()
-  const sut = new SignUpController(emailValidatorSpy, addAccountSpy, checkEmailAccountSpy, authenticationSpy)
+  const sendEmailVerificationSpy = new SendEmailVerificationSpy()
+  const sut = new SignUpController(emailValidatorSpy, addAccountSpy, checkEmailAccountSpy, authenticationSpy, sendEmailVerificationSpy)
   return {
     sut,
     emailValidatorSpy,
     addAccountSpy,
     checkEmailAccountSpy,
-    authenticationSpy
+    authenticationSpy,
+    sendEmailVerificationSpy
   }
 }
 
