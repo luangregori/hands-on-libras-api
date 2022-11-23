@@ -9,7 +9,7 @@ export class DbSendEmail implements SendEmailVerification {
 
   async sendEmailVerification (email: string): Promise<void> {
     const account = await this.findAccountRepository.findByEmail(email)
-    const link = `https://hands-on-libras-api.herokuapp.com/api/verify-account/${account.id}`
+    const link = `https://hands-on-libras-api.herokuapp.com/api/verify-email/${account.id}`
 
     const params = {
       to: email,
