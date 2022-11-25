@@ -7,7 +7,8 @@ import {
   SignUpController,
   UserInfoController,
   UpdateUserInfoController,
-  VerifyEmailController
+  VerifyEmailController,
+  RecoverPasswordController
 } from '@/presentation/controllers'
 import {
   DbAddAccount,
@@ -18,7 +19,8 @@ import {
   DbUpdateAccount,
   DbLoadRanking,
   DbSendEmail,
-  DbVerifyEmail
+  DbVerifyEmail,
+  DbSendEmailRecover
 } from '@/data/usecases'
 import {
   LogMongoRepository,
@@ -89,4 +91,20 @@ export const makeVerifyEmailController = (): Controller => {
   const logMongoRepository = new LogMongoRepository()
   const verifyEmailController = new VerifyEmailController(dbVerifyEmail)
   return new LogControllerDecorator(verifyEmailController, logMongoRepository)
+}
+
+export const makeRecoverPasswordController = (): Controller => {
+  const salt = 12
+  const nodeMailerAdapter = new NodeMailerAdapter(
+    env.nodeMailerConfig.host,
+    Number(env.nodeMailerConfig.port),
+    env.nodeMailerConfig.user,
+    env.nodeMailerConfig.pass
+  )
+  const bcryptAdapter = new BcryptAdapter(salt)
+  const accountMongoRepository = new AccountMongoRepository()
+  const dbSendEmailRecover = new DbSendEmailRecover(nodeMailerAdapter, bcryptAdapter, accountMongoRepository)
+  const logMongoRepository = new LogMongoRepository()
+  const recoverPasswordController = new RecoverPasswordController(dbSendEmailRecover)
+  return new LogControllerDecorator(recoverPasswordController, logMongoRepository)
 }

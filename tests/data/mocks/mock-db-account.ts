@@ -30,10 +30,18 @@ export class FindAccountRepositorySpy implements FindAccountRepository {
 
 export class UpdateAccountRepositorySpy implements UpdateAccountRepository {
   params: UpdateAccountRepository.Params
+  email: string
+  password: string
   result = mockAccountModel()
 
   async updateById (accountId: string, params: UpdateAccountRepository.Params): Promise<AccountModel> {
     this.params = params
+    return this.result
+  }
+
+  async updatePasswordByEmail (email: string, password: string): Promise<AccountModel> {
+    this.email = email
+    this.password = password
     return this.result
   }
 }

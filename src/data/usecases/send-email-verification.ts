@@ -19,6 +19,6 @@ export class DbSendEmail implements SendEmailVerification {
       html: `<h1>Olá!</h1> Clique no link abaixo para verificar seu e-mail no Hands On Libras \n <a href="${link}"> ${link} </a>`
     }
 
-    await this.remoteSendEmail.send(params).catch(err => { console.log({ err }) })
+    await this.remoteSendEmail.send(params)
   }
 }
