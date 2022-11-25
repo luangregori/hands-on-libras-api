@@ -31,4 +31,14 @@ export class AccountMongoRepository implements AddAccountRepository, FindAccount
     )
     return MongoHelper.map(result.value)
   }
+
+  async updatePasswordByEmail (email: string, password: string): Promise<AccountModel> {
+    const accountCollection = await MongoHelper.getCollection('accounts')
+    const result = await accountCollection.findOneAndUpdate(
+      { email },
+      { $set: { password: password } },
+      { returnOriginal: false }
+    )
+    return MongoHelper.map(result.value)
+  }
 }

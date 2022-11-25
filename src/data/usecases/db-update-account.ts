@@ -1,11 +1,12 @@
 import { UpdateAccount } from '@/domain/usecases'
-import { FindAccountRepository, HashComparer, UpdateAccountRepository } from '@/data/protocols'
+import { FindAccountRepository, HashComparer, Hasher, UpdateAccountRepository } from '@/data/protocols'
 
 export class DbUpdateAccount implements UpdateAccount {
   constructor (
     private readonly findAccountRepository: FindAccountRepository,
     private readonly hashComparer: HashComparer,
-    private readonly updateAccountRepository: UpdateAccountRepository
+    private readonly updateAccountRepository: UpdateAccountRepository,
+    private readonly hasher: Hasher
   ) { }
 
   async updateById (accountId: string, params: UpdateAccount.Params): Promise<UpdateAccount.Result> {
@@ -15,7 +16,8 @@ export class DbUpdateAccount implements UpdateAccount {
       if (!isValid) {
         throw new Error('Invalid password')
       }
-      params = { ...params, password: params.newPassword } as any
+      const hashedPassword = await this.hasher.hash(params.newPassword)
+      params = { ...params, password: hashedPassword } as any
       delete params.oldPassword
       delete params.newPassword
     }
