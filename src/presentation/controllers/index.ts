@@ -1,5 +1,6 @@
 export * from './challenge-lesson'
 export * from './complete-learn'
+export * from './confirm-code'
 export * from './complete-challenge'
 export * from './learn-lesson'
 export * from './load-categories'

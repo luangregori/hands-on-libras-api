@@ -8,7 +8,8 @@ import {
   UserInfoController,
   UpdateUserInfoController,
   VerifyEmailController,
-  RecoverPasswordController
+  RecoverPasswordController,
+  ConfirmCodeController
 } from '@/presentation/controllers'
 import {
   DbAddAccount,
@@ -107,4 +108,15 @@ export const makeRecoverPasswordController = (): Controller => {
   const logMongoRepository = new LogMongoRepository()
   const recoverPasswordController = new RecoverPasswordController(dbSendEmailRecover)
   return new LogControllerDecorator(recoverPasswordController, logMongoRepository)
+}
+
+export const makeConfirmCodeController = (): Controller => {
+  const salt = 12
+  const bcryptAdapter = new BcryptAdapter(salt)
+  const accountMongoRepository = new AccountMongoRepository()
+  const jwtAdapter = new JwtAdapter(env.jwtSecret)
+  const authentication = new DbAuthentication(accountMongoRepository, bcryptAdapter, jwtAdapter)
+  const logMongoRepository = new LogMongoRepository()
+  const confirmCodeController = new ConfirmCodeController(authentication)
+  return new LogControllerDecorator(confirmCodeController, logMongoRepository)
 }
