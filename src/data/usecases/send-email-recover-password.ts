@@ -1,16 +1,23 @@
 import { RecoverPassword } from '@/domain/usecases'
-import { RemoteSendEmail, Hasher, UpdateAccountRepository } from '@/data/protocols'
+import { FindAccountRepository, RemoteSendEmail, Hasher, UpdateAccountRepository } from '@/data/protocols'
 
 export class DbSendEmailRecover implements RecoverPassword {
   constructor (
+    private readonly findAccountRepository: FindAccountRepository,
     private readonly remoteSendEmail: RemoteSendEmail,
     private readonly hasher: Hasher,
     private readonly updateAccountRepository: UpdateAccountRepository
   ) { }
 
   async sendEmail (email: string): Promise<void> {
+    const account = await this.findAccountRepository.findByEmail(email)
+    if (!account || !account.email_verified) {
+      return
+    }
+
     const code = this.generateOTP()
     const hashedPassword = await this.hasher.hash(code)
+
     await this.updateAccountRepository.updatePasswordByEmail(email, hashedPassword)
 
     const params = {
@@ -20,7 +27,6 @@ export class DbSendEmailRecover implements RecoverPassword {
       text: `Olá! Digite o código a seguir no app para recuperar o acesso a sua conta: \n ${code}`,
       html: `<h1>Olá!</h1> Digite o código a seguir no app para recuperar o acesso a sua conta: \n ${code} `
     }
-
     await this.remoteSendEmail.send(params)
   }
 

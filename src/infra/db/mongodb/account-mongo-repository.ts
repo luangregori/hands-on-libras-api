@@ -34,10 +34,6 @@ export class AccountMongoRepository implements AddAccountRepository, FindAccount
 
   async updatePasswordByEmail (email: string, password: string): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts')
-    const account = await accountCollection.findOne({ email })
-    if (!account) {
-      return
-    }
     const result = await accountCollection.findOneAndUpdate(
       { email },
       { $set: { password: password } },

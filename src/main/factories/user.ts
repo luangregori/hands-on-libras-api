@@ -104,7 +104,7 @@ export const makeRecoverPasswordController = (): Controller => {
   )
   const bcryptAdapter = new BcryptAdapter(salt)
   const accountMongoRepository = new AccountMongoRepository()
-  const dbSendEmailRecover = new DbSendEmailRecover(nodeMailerAdapter, bcryptAdapter, accountMongoRepository)
+  const dbSendEmailRecover = new DbSendEmailRecover(accountMongoRepository, nodeMailerAdapter, bcryptAdapter, accountMongoRepository)
   const logMongoRepository = new LogMongoRepository()
   const recoverPasswordController = new RecoverPasswordController(dbSendEmailRecover)
   return new LogControllerDecorator(recoverPasswordController, logMongoRepository)
