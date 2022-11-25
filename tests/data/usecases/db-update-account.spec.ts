@@ -1,5 +1,5 @@
 import { DbUpdateAccount } from '@/data/usecases'
-import { HashComparerSpy, FindAccountRepositorySpy, UpdateAccountRepositorySpy } from '@/tests/data/mocks'
+import { HashComparerSpy, FindAccountRepositorySpy, UpdateAccountRepositorySpy, HasherSpy } from '@/tests/data/mocks'
 import { mockAccountId, mockUpdateAccountParams, throwError } from '@/tests/domain/mocks'
 
 interface SutTypes {
@@ -7,18 +7,21 @@ interface SutTypes {
   hasherCompareSpy: HashComparerSpy
   findAccountRepositorySpy: FindAccountRepositorySpy
   updateAccountRepositorySpy: UpdateAccountRepositorySpy
+  hasherSpy: HasherSpy
 }
 
 const makeSut = (): SutTypes => {
   const hasherCompareSpy = new HashComparerSpy()
   const findAccountRepositorySpy = new FindAccountRepositorySpy()
   const updateAccountRepositorySpy = new UpdateAccountRepositorySpy()
-  const sut = new DbUpdateAccount(findAccountRepositorySpy, hasherCompareSpy, updateAccountRepositorySpy)
+  const hasherSpy = new HasherSpy()
+  const sut = new DbUpdateAccount(findAccountRepositorySpy, hasherCompareSpy, updateAccountRepositorySpy, hasherSpy)
   return {
     sut,
     hasherCompareSpy,
     findAccountRepositorySpy,
-    updateAccountRepositorySpy
+    updateAccountRepositorySpy,
+    hasherSpy
   }
 }
 
@@ -62,7 +65,7 @@ describe('DbUpdateAccount UseCase', () => {
   })
 
   test('Should call UpdateAccountRepository with correct values', async () => {
-    const { sut, updateAccountRepositorySpy } = makeSut()
+    const { sut, updateAccountRepositorySpy, hasherSpy } = makeSut()
     const updateSpy = jest.spyOn(updateAccountRepositorySpy, 'updateById')
     const accountId = mockAccountId()
     const updateAccountParams = mockUpdateAccountParams()
@@ -70,7 +73,7 @@ describe('DbUpdateAccount UseCase', () => {
     expect(updateSpy).toHaveBeenCalledWith(accountId, {
       name: updateAccountParams.name,
       email: updateAccountParams.email,
-      password: updateAccountParams.newPassword,
+      password: hasherSpy.digest,
       image_url: updateAccountParams.image_url
     })
   })

@@ -9,7 +9,8 @@ import {
   UpdateUserInfoController,
   VerifyEmailController,
   RecoverPasswordController,
-  ConfirmCodeController
+  ConfirmCodeController,
+  NewPasswordController
 } from '@/presentation/controllers'
 import {
   DbAddAccount,
@@ -81,7 +82,7 @@ export const makeUpdateUserInfoController = (): Controller => {
   const bcryptAdapter = new BcryptAdapter(salt)
   const accountMongoRepository = new AccountMongoRepository()
   const logMongoRepository = new LogMongoRepository()
-  const dbUpdateAccount = new DbUpdateAccount(accountMongoRepository, bcryptAdapter, accountMongoRepository)
+  const dbUpdateAccount = new DbUpdateAccount(accountMongoRepository, bcryptAdapter, accountMongoRepository, bcryptAdapter)
   const updateUserInfoController = new UpdateUserInfoController(dbUpdateAccount)
   return new LogControllerDecorator(updateUserInfoController, logMongoRepository)
 }
@@ -119,4 +120,14 @@ export const makeConfirmCodeController = (): Controller => {
   const logMongoRepository = new LogMongoRepository()
   const confirmCodeController = new ConfirmCodeController(authentication)
   return new LogControllerDecorator(confirmCodeController, logMongoRepository)
+}
+
+export const makeNewPasswordController = (): Controller => {
+  const salt = 12
+  const bcryptAdapter = new BcryptAdapter(salt)
+  const accountMongoRepository = new AccountMongoRepository()
+  const logMongoRepository = new LogMongoRepository()
+  const dbUpdateAccount = new DbUpdateAccount(accountMongoRepository, bcryptAdapter, accountMongoRepository, bcryptAdapter)
+  const newPasswordController = new NewPasswordController(dbUpdateAccount)
+  return new LogControllerDecorator(newPasswordController, logMongoRepository)
 }

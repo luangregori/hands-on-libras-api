@@ -6,7 +6,8 @@ import {
   makeUpdateUserInfoController,
   makeVerifyEmailController,
   makeRecoverPasswordController,
-  makeConfirmCodeController
+  makeConfirmCodeController,
+  makeNewPasswordController
 } from '@/main/factories/user'
 import { adaptRoute } from '@/main/adapters/express-route-adapter'
 import { auth } from '../middlewares'
@@ -19,5 +20,5 @@ export default (router: Router): void => {
   router.get('/verify-email/:id', adaptRoute(makeVerifyEmailController()))
   router.post('/recover-password', adaptRoute(makeRecoverPasswordController()))
   router.post('/confirm-code', adaptRoute(makeConfirmCodeController()))
-  // router.post('/new-password', auth, adaptRoute())
+  router.post('/new-password', auth, adaptRoute(makeNewPasswordController()))
 }
