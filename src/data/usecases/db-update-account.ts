@@ -1,6 +1,7 @@
 import { UpdateAccount } from '@/domain/usecases'
 import { FindAccountRepository, HashComparer, Hasher, UpdateAccountRepository } from '@/data/protocols'
 import { AccountModel } from '@/domain/models'
+import { InvalidPasswordError } from '@/presentation/errors'
 
 export class DbUpdateAccount implements UpdateAccount {
   constructor (
@@ -15,7 +16,7 @@ export class DbUpdateAccount implements UpdateAccount {
     if (params.newPassword) {
       const isValid = await this.hashComparer.compare(params.oldPassword, account.password)
       if (!isValid) {
-        throw new Error('Invalid password')
+        throw new InvalidPasswordError()
       }
       const hashedPassword = await this.hasher.hash(params.newPassword)
       params = { ...params, password: hashedPassword } as any

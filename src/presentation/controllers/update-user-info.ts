@@ -1,7 +1,7 @@
 import { Controller, HttpResponse } from '@/presentation/protocols'
 import { badRequest, ok, serverError } from '@/presentation/helpers/http-helper'
 import { UpdateAccount } from '@/domain/usecases'
-import { MissingParamError } from '../errors'
+import { InvalidPasswordError, MissingParamError } from '../errors'
 
 export class UpdateUserInfoController implements Controller {
   constructor (
@@ -25,6 +25,9 @@ export class UpdateUserInfoController implements Controller {
       const userInfo = await this.updateAccount.updateById(accountId, params)
       return ok(userInfo)
     } catch (error) {
+      if (error instanceof InvalidPasswordError) {
+        return badRequest(error)
+      }
       return serverError(error)
     }
   }
