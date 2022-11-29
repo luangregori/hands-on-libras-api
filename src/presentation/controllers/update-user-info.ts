@@ -14,6 +14,13 @@ export class UpdateUserInfoController implements Controller {
         return badRequest(new MissingParamError('oldPassword'))
       }
 
+      const protectedFields = ['id', '_id', 'password']
+      for (const field of protectedFields) {
+        if (request[field]) {
+          delete request[field]
+        }
+      }
+
       const { accountId, ...params } = request
       const userInfo = await this.updateAccount.updateById(accountId, params)
       return ok(userInfo)
@@ -30,5 +37,6 @@ export namespace UpdateUserInfoController {
     image_url?: string
     oldPassword?: string
     newPassword?: string
+    password?: string
   }
 }

@@ -73,6 +73,7 @@ describe('DbUpdateAccount UseCase', () => {
     expect(updateSpy).toHaveBeenCalledWith(accountId, {
       name: updateAccountParams.name,
       email: updateAccountParams.email,
+      email_verified: false,
       password: hasherSpy.digest,
       image_url: updateAccountParams.image_url
     })
