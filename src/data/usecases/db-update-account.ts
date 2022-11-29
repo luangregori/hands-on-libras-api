@@ -3,14 +3,14 @@ import { FindAccountRepository, HashComparer, Hasher, UpdateAccountRepository } 
 import { AccountModel } from '@/domain/models'
 
 export class DbUpdateAccount implements UpdateAccount {
-  constructor(
+  constructor (
     private readonly findAccountRepository: FindAccountRepository,
     private readonly hashComparer: HashComparer,
     private readonly updateAccountRepository: UpdateAccountRepository,
     private readonly hasher: Hasher
   ) { }
 
-  async updateById(accountId: string, params: UpdateAccount.Params): Promise<UpdateAccount.Result> {
+  async updateById (accountId: string, params: UpdateAccount.Params): Promise<UpdateAccount.Result> {
     const account = await this.findAccountRepository.findById(accountId)
     if (params.newPassword) {
       const isValid = await this.hashComparer.compare(params.oldPassword, account.password)
@@ -29,7 +29,7 @@ export class DbUpdateAccount implements UpdateAccount {
     return updatedAccount
   }
 
-  private checkNewEmail(account: AccountModel, params: UpdateAccount.Params): UpdateAccount.Params {
+  private checkNewEmail (account: AccountModel, params: UpdateAccount.Params): UpdateAccount.Params {
     if (params.email && params.email !== account.email) {
       params.email_verified = false
     }
