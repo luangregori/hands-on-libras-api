@@ -4,14 +4,21 @@ import { UpdateAccount } from '@/domain/usecases'
 import { MissingParamError } from '../errors'
 
 export class UpdateUserInfoController implements Controller {
-  constructor (
+  constructor(
     private readonly updateAccount: UpdateAccount
   ) { }
 
-  async handle (request: UpdateUserInfoController.Request): Promise<HttpResponse> {
+  async handle(request: UpdateUserInfoController.Request): Promise<HttpResponse> {
     try {
       if (request.newPassword && !request.oldPassword) {
         return badRequest(new MissingParamError('oldPassword'))
+      }
+
+      const protectedFields = ["id", "_id", "password"]
+      for (const field of protectedFields) {
+        if (request[field]) {
+          delete request[field]
+        }
       }
 
       const { accountId, ...params } = request
@@ -30,5 +37,6 @@ export namespace UpdateUserInfoController {
     image_url?: string
     oldPassword?: string
     newPassword?: string
+    password?: string
   }
 }
